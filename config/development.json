@@ -1,0 +1,29 @@
+{
+  "version": "0.0.1",
+  "hostname": "http://localhost",
+  "front_url": "http://localhost:5000",
+  "jwt": {
+    "secret": "some-secret"
+  },
+  "port": 4000,
+  "working_dir": "/home/node/app",
+  "logger": {
+    "consoleEnable": true,
+    "consoleLevel": "silly",
+    "fileEnable": false,
+    "fileLevel": "info",
+    "filePath": "/home/node/app/logs",
+    "fileName": "job-api.log",
+    "fileMaxSize": 1048576
+  },
+  "email": {
+    "name": "noreply@test.com",
+    "secret": "EvJDm38bkuvTPSmm"
+  },
+  "recaptcha": {
+    "skip": true,
+    "key": "6Ld10rMUAAAAAFkfY_9OhbOiYcUVj9FC4wdjSiAU",
+    "secret": "6Ld10rMUAAAAAMFwMaWlOJYVbGccSw3sGhBvg7lX"
+  },
+  "bcrypt": "$2a$10$RbQQ3zTCiYrniof1ipYgdu"
+}
