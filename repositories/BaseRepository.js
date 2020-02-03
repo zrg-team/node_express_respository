@@ -1,6 +1,6 @@
 const factory = require('../utils/repositoryHelper')
 
-class Repository {
+class BaseRepository {
   constructor (model) {
     if (this.create === undefined || typeof this.create !== 'function') {
       throw new Error('Must override .create() method')
@@ -270,4 +270,4 @@ class Repository {
   }
 }
 
-module.exports = Repository
+module.exports = BaseRepository

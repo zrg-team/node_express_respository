@@ -1,6 +1,6 @@
-const Repository = require('./Repository')
+const BaseRepository = require('./BaseRepository')
 
-class UserRepository extends Repository {
+class UserRepository extends BaseRepository {
   constructor () {
     super('user')
 
