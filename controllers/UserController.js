@@ -5,16 +5,15 @@ const ApiError = require('../utils/api-error')
 const response = require('../utils/response')
 const auth = require('../libs/auth')
 const UserController = () => {
-  // Other functions...
   const login = async (req, res, next) => {
     try {
       const schema = Joi.object({
-        username: Joi.string().required(),
-        password: Joi.string().required(),
+        username: Joi.string().required().error(new Error('The username is required.')),
+        password: Joi.string().required().error(new Error('The password is required.')),
       })
       const { error, value } = schema.validate(req.body)
       if (error) {
-        return next(new ApiError(error.details, 400))
+        return next(new ApiError(error.message, 400))
       }
       const user = await userRepository.getUser(value.username)
       if (!user) {
@@ -25,14 +24,13 @@ const UserController = () => {
         return next(new ApiError('Invalid password', 401))
       }
       const token = auth.generateToken(user.id)
-      return response.success(res, { message: 'Logged in successfully', token })
+      return response.success(res, { status: 200, user: { id: user.id, username: user.username }, token })
     } catch (err) {
       return next(err)
     }
   }
   return {
     login,
-    // Other exported functions...
   }
 }
 module.exports = UserController
