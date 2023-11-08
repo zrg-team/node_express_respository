@@ -1,6 +1,6 @@
+// PATH: /utils/response.js
 const status = require('http-status')
 const ApiError = require('../utils/api-error')
-
 module.exports = (res = {}) => {
   const isDebug = process.env.DEBUG === 'true'
   return {
