@@ -15,7 +15,7 @@ class UserType extends Model
         'updated_at',
     ];
     // Define any relationships here if necessary
-    // For example, if UserType has many Users:
+    // For example, if user_types has a one-to-many relationship with users:
     // public function users()
     // {
     //     return $this->hasMany(User::class);

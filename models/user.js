@@ -7,9 +7,9 @@ module.exports = function (sequelize, DataTypes) {
       primaryKey: true,
       autoIncrement: true
     },
-    username: { // Updated to 'username' to match the column name in the table
+    user_name: {
       type: DataTypes.STRING(255),
-      allowNull: true
+      allowNull: false
     },
     password: {
       type: DataTypes.STRING(255),
@@ -21,20 +21,15 @@ module.exports = function (sequelize, DataTypes) {
     },
     created_at: {
       type: DataTypes.DATE,
-      allowNull: false // Updated to false as created_at should not be nullable
+      allowNull: true
     },
     updated_at: {
       type: DataTypes.DATE,
-      allowNull: false // Updated to false as updated_at should not be nullable
+      allowNull: true
     },
     avatar: {
       type: DataTypes.STRING(255),
       allowNull: true
-    },
-    logged_in: { // Added new field 'logged_in'
-      type: DataTypes.BOOLEAN,
-      allowNull: true,
-      defaultValue: false // Assuming default value for logged_in is false
     }
   }, {
     tableName: 'users',
@@ -43,9 +38,9 @@ module.exports = function (sequelize, DataTypes) {
     updatedAt: 'updated_at'
   });
   User.associate = function(models) {
-    User.hasMany(models.Article, { // Corrected the association to hasMany and referenced the correct model
-      foreignKey: 'user_id',
-      as: 'articles'
+    User.belongsTo(models.user_type, {
+      foreignKey: 'user_type_id',
+      as: 'userType'
     });
   };
   return User;

@@ -1,12 +1,12 @@
 const hooks = {
   beforeCreate: (post) => {
-    // Add any logic you want to execute before creating a post
+    // Add any logic here that you need to run before creating a post
   },
   beforeUpdate: (post) => {
-    // Add any logic you want to execute before updating a post
+    // Add any logic here that you need to run before updating a post
   },
   beforeBulkUpdate: (data) => {
-    // Add any logic you want to execute before bulk updating posts
+    // Add any logic here that you need to run before bulk updating posts
   }
 }
 module.exports = function (sequelize, DataTypes) {
@@ -23,7 +23,7 @@ module.exports = function (sequelize, DataTypes) {
     },
     content: {
       type: DataTypes.TEXT,
-      allowNull: true
+      allowNull: false
     },
     status: {
       type: DataTypes.INTEGER(4),
@@ -44,8 +44,7 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       field: 'author_id'
-    },
-    // Add any other fields you need for the posts table
+    }
   }, {
     hooks,
     tableName: 'posts'
@@ -56,7 +55,9 @@ module.exports = function (sequelize, DataTypes) {
       foreignKey: 'author_id',
       sourceKey: 'id'
     });
-    // Define other associations like hasMany, belongsToMany if needed
+    factory.Post.associationModels = {
+      author: factory.User
+    }
   }
   return Post;
 }
