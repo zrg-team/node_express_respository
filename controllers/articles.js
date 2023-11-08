@@ -19,6 +19,33 @@ const getArticleDetail = async (articleId) => {
     traceError(error);
   }
 };
+const getArticleList = async (page, limit) => {
+  try {
+    if (!page || !limit || isNaN(page) || isNaN(limit)) {
+      throw new ApiError('Wrong format.');
+    }
+    if (page < 1) {
+      throw new ApiError('Page must be greater than 0.');
+    }
+    const offset = (page - 1) * limit;
+    const articles = await Article.findAll({ offset, limit });
+    if (!articles.length) {
+      throw new ApiError('No articles found');
+    }
+    const totalArticles = await Article.count();
+    const totalPages = Math.ceil(totalArticles / limit);
+    return {
+      status: 200,
+      articles,
+      total_pages: totalPages,
+      limit,
+      page
+    };
+  } catch (error) {
+    traceError(error);
+  }
+};
 module.exports = {
   getArticleDetail,
+  getArticleList,
 };
