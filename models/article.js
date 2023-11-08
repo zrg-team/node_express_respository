@@ -38,6 +38,7 @@ module.exports = function (sequelize, DataTypes) {
     updatedAt: 'updated_at'
   });
   Article.associate = function(models) {
+    // Ensure the association is correctly defined
     Article.belongsTo(models.User, {
       foreignKey: 'user_id',
       as: 'author'
