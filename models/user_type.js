@@ -25,10 +25,16 @@ module.exports = function (sequelize, DataTypes) {
     }
   }, {
     tableName: 'user_types', // Corrected table name to match the provided table name
-    timestamps: true, // Enable timestamps to handle created_at and updated_at
-    underscored: true // Use snake_case for automatically added timestamp fields
+    timestamps: true, // Enable timestamps
+    createdAt: 'created_at', // Map the 'createdAt' field to the 'created_at' column
+    updatedAt: 'updated_at' // Map the 'updatedAt' field to the 'updated_at' column
   });
-  // Associations can be defined here
-  // Example: UserType.hasMany(models.Post, { foreignKey: 'user_type_id' });
+  // Define associations here if needed, for example:
+  // UserType.associate = function(models) {
+  //   UserType.hasMany(models.User, {
+  //     foreignKey: 'user_type_id',
+  //     as: 'users'
+  //   });
+  // };
   return UserType;
-};
+}

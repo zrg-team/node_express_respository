@@ -19,16 +19,24 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.STRING(50),
       allowNull: true
     },
+    createdat: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    updatedat: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    avatar: {
+      type: DataTypes.STRING(255),
+      allowNull: true
+    },
     created_at: {
       type: DataTypes.DATE,
       allowNull: true
     },
     updated_at: {
       type: DataTypes.DATE,
-      allowNull: true
-    },
-    avatar: {
-      type: DataTypes.STRING(255),
       allowNull: true
     }
   }, {
@@ -38,7 +46,6 @@ module.exports = function (sequelize, DataTypes) {
     updatedAt: 'updated_at'
   });
   User.associate = function(models) {
-    // associations can be defined here
     User.belongsTo(models.user_type, {
       foreignKey: 'user_type_id',
       as: 'userType'

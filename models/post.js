@@ -1,12 +1,12 @@
 const hooks = {
   beforeCreate: (post) => {
-    // Add any logic here that you need to run before creating a post
+    // Add any logic you want to execute before creating a post
   },
   beforeUpdate: (post) => {
-    // Add any logic here that you need to run before updating a post
+    // Add any logic you want to execute before updating a post
   },
   beforeBulkUpdate: (data) => {
-    // Add any logic here that you need to run before bulk updating posts
+    // Add any logic you want to execute before bulk updating posts
   }
 }
 module.exports = function (sequelize, DataTypes) {
@@ -44,20 +44,20 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       field: 'author_id'
-    }
+    },
+    // Add other fields here
   }, {
     hooks,
     tableName: 'posts'
   });
   Post.associate = (factory) => {
+    // Define associations here, for example:
     factory.Post.belongsTo(factory.User, {
       as: 'author',
       foreignKey: 'author_id',
       sourceKey: 'id'
     });
-    factory.Post.associationModels = {
-      author: factory.User
-    }
-  }
+    // If there are other models associated with Post, define them here
+  };
   return Post;
 }
