@@ -3,7 +3,7 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Pagination extends Model {
     static associate(models) {
-      // define association here
+      // define association here if necessary
     }
   };
   Pagination.init({
@@ -12,6 +12,16 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       autoIncrement: true,
       allowNull: false
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      field: 'created_at'
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      field: 'updated_at'
     },
     currentPage: {
       type: DataTypes.INTEGER,
@@ -33,15 +43,15 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       field: 'has_pagination'
     },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      field: 'created_at'
+    articlesPerPage: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      field: 'articles_per_page'
     },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      field: 'updated_at'
+    isVisible: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+      field: 'is_visible'
     }
   }, {
     sequelize,

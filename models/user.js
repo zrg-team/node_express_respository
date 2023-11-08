@@ -9,7 +9,7 @@ module.exports = function (sequelize, DataTypes) {
     },
     username: { // Updated to 'username' to match the column name in the table
       type: DataTypes.STRING(255),
-      allowNull: false
+      allowNull: true
     },
     password: {
       type: DataTypes.STRING(255),

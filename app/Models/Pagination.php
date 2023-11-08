@@ -11,13 +11,13 @@ class Pagination extends Model
         'per_page',
         'total_pages',
         'has_pagination',
+        'articles_per_page', // Added new fillable field
+        'is_visible', // Added new fillable field
     ];
     protected $dates = [
         'created_at',
         'updated_at',
     ];
-    // Assuming there is a relationship where Pagination belongs to a User
-    // and the 'user_id' foreign key is present in the 'paginations' table.
     public function user()
     {
         return $this->belongsTo(User::class);

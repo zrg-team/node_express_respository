@@ -2,18 +2,18 @@
 module.exports = function (sequelize, DataTypes) {
   const Article = sequelize.define('Article', {
     id: {
-      type: DataTypes.INTEGER(11),
+      type: DataTypes.UUID,
       allowNull: false,
       primaryKey: true,
-      autoIncrement: true
+      defaultValue: DataTypes.UUIDV4
     },
     created_at: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: false
     },
     updated_at: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: false
     },
     title: {
       type: DataTypes.STRING(255),
@@ -27,7 +27,7 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
-        model: 'User',
+        model: 'users', // This is the table name, not the model name
         key: 'id'
       }
     }
@@ -38,7 +38,7 @@ module.exports = function (sequelize, DataTypes) {
     updatedAt: 'updated_at'
   });
   Article.associate = function(models) {
-    // associations can be defined here
+    // Ensure the association is correctly defined
     Article.belongsTo(models.User, {
       foreignKey: 'user_id',
       as: 'author'
