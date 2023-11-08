@@ -15,7 +15,6 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.STRING(64),
       allowNull: true
     },
-    // Adding the created_at and updated_at fields
     created_at: {
       type: DataTypes.DATE,
       allowNull: true
@@ -25,11 +24,11 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: true
     }
   }, {
-    tableName: 'user_types', // Correcting the table name to match the provided table
-    timestamps: true, // Enabling Sequelize to manage created_at and updated_at
-    underscored: true // Ensuring the column names are snake_cased
+    tableName: 'user_types', // Corrected table name to match the provided table name
+    timestamps: true, // Enable timestamps to handle created_at and updated_at
+    underscored: true // Use snake_case for automatically added timestamp fields
   });
   // Associations can be defined here
-  // Example: UserType.hasMany(models.User, { foreignKey: 'user_type_id' });
+  // Example: UserType.hasMany(models.Post, { foreignKey: 'user_type_id' });
   return UserType;
-}
+};

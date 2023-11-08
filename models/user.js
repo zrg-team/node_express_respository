@@ -38,6 +38,7 @@ module.exports = function (sequelize, DataTypes) {
     updatedAt: 'updated_at'
   });
   User.associate = function(models) {
+    // associations can be defined here
     User.belongsTo(models.user_type, {
       foreignKey: 'user_type_id',
       as: 'userType'

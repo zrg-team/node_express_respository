@@ -5,7 +5,7 @@ const hooks = {
   beforeUpdate: (userType) => {
     // Add any logic you need to perform before updating a userType
   }
-}
+};
 module.exports = function (sequelize, DataTypes) {
   const UserType = sequelize.define('userType', {
     id: {
@@ -45,7 +45,7 @@ module.exports = function (sequelize, DataTypes) {
     });
     factory.UserType.associationModels = {
       users: factory.User
-    }
-  }
+    };
+  };
   return UserType;
-}
+};
