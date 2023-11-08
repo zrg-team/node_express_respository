@@ -1,8 +1,45 @@
-// PATH: /controllers/UserController.js
-const userRepository = require('../repositories/userRepository');
-const response = require('../helpers/response');
-const ERROR_CODES = require('../constants/errorCodes');
-const status = require('http-status');
+const bcryptService = require('../services/bcryptService'); // Assuming this service exists for password comparison
+const userRepository = require('../repositories/userRepository'); // Assuming this repository exists for DB operations
+const auth = require('../utils/auth'); // Assuming this utility exists for token generation
+const response = require('../utils/response'); // Assuming this utility exists for standardized API responses
+const ERROR_CODES = require('../constants/errorCodes'); // Assuming this constant file exists for error codes
+const status = require('http-status'); // Assuming http-status package is used for HTTP status codes
+const authenticateUser = async (req, res, next) => {
+  try {
+    const { username, password } = req.body;
+    if (!username || !password) {
+      return response(res).error({
+        code: ERROR_CODES.PARAMS_ERROR,
+        message: 'Username and password are required.'
+      }, status.BAD_REQUEST);
+    }
+    let user = await userRepository.findOne({
+      where: { username }
+    });
+    if (!user) {
+      return response(res).error({
+        code: ERROR_CODES.USER_NOT_EXIST,
+        message: 'User not found.'
+      }, status.BAD_REQUEST);
+    }
+    user = user.toJSON();
+    const passwordMatch = await bcryptService.comparePassword(password, user.password);
+    if (!passwordMatch) {
+      return response(res).error({
+        code: ERROR_CODES.UNAUTHORIZED,
+        message: 'Password is incorrect.'
+      }, status.UNAUTHORIZED);
+    }
+    await userRepository.update({ logged_in: true }, { where: { id: user.id } });
+    const token = auth.utils.issue({
+      id: user.id,
+      username: user.username
+    });
+    return response(res).success({ token });
+  } catch (err) {
+    return next(err);
+  }
+};
 const updateLoggedInStatus = async (req, res, next) => {
   try {
     const { user_id, logged_in } = req.body;
@@ -21,8 +58,13 @@ const updateLoggedInStatus = async (req, res, next) => {
   } catch (err) {
     return next(err);
   }
-}
-module.exports = {
-  // ... other methods
-  updateLoggedInStatus,
-}
+};
+const UserController = () => {
+  // ... existing methods
+  return {
+    // ... other methods
+    authenticateUser,
+    updateLoggedInStatus,
+  };
+};
+module.exports = UserController;
