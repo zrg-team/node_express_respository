@@ -2,7 +2,6 @@ const status = require('http-status')
 const ApiError = require('../utils/api-error')
 const errorParser = require('../utils/errors')
 const dbService = require('.././libs/db')
-
 module.exports = {
   process: async (process, option = { autocommit: false }) => {
     let transaction
