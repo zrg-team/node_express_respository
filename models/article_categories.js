@@ -1,3 +1,4 @@
+// PATH: /models/article_categories.js
 /* jshint indent: 2 */
 module.exports = function (sequelize, DataTypes) {
   return sequelize.define('article_categories', {
