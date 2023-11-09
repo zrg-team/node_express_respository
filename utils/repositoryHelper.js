@@ -1,9 +1,10 @@
 const Sequelize = require('sequelize')
 const dbService = require('.././libs/db')
+// Models
 const User = require('../models/user')
 const UserType = require('../models/user_type')
 const File = require('../models/file')
-const Article = require('../models/article') // Import Article model
+const Article = require('../models/article')
 class RepositoryHelper {
   constructor (sequelize) {
     this.factory = {}
@@ -12,7 +13,7 @@ class RepositoryHelper {
       User: 'User',
       UserType: 'UserType',
       File: 'File',
-      Article: 'Article' // Add Article to models
+      Article: 'Article'
     }
   }
   getRepositoryModel (repo) {
@@ -36,7 +37,7 @@ class RepositoryHelper {
         model = File(this.sequelize, Sequelize)
         this.factory.File = model
         break
-      case this.models.Article: // Add case for Article
+      case this.models.Article:
         model = Article(this.sequelize, Sequelize)
         this.factory.Article = model
         break
@@ -55,7 +56,7 @@ class RepositoryHelper {
         this.factory.User = this.getModel('User')
         this.factory.File.associate(this.factory)
         return this.factory.File
-      case 'article': // Add case for Article
+      case 'article':
         this.factory.Article = this.getModel('Article')
         this.factory.User = this.getModel('User')
         this.factory.Article.associate(this.factory)
