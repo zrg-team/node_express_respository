@@ -16,7 +16,7 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: true
     },
     status: {
-      type: DataTypes.STRING(12),
+      type: DataTypes.INTEGER(11),
       allowNull: true
     },
     createdat: {
@@ -41,6 +41,10 @@ module.exports = function (sequelize, DataTypes) {
     },
     updated_at: {
       type: DataTypes.DATE,
+      allowNull: true
+    },
+    user_type_id: {
+      type: DataTypes.INTEGER(11),
       allowNull: true
     }
   }, {
