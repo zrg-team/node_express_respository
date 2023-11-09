@@ -1,8 +1,7 @@
+// PATH: /routes/user.js
 const auth = require('.././libs/auth')
 const file = require('.././libs/files')
-
 const MODULE_NAME = 'user'
-
 const routes = {
   'POST /': {
     path: 'UserController.create',
@@ -56,7 +55,6 @@ const routes = {
     ]
   }
 }
-
 module.exports = {
   routes,
   MODULE_NAME
