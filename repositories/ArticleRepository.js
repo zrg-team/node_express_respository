@@ -7,28 +7,29 @@ class ArticleRepository extends BaseRepository {
   async get(articleId) {
     return this.findById(articleId);
   }
-  async getByUserId(user_id, page = 1, limit = 10) {
+  async getArticlesByUser(user_id, page = 1, limit = 10) {
     const offset = (page - 1) * limit;
-    const query = { where: { user_id }, order: { created_at: 'DESC' }, skip: offset, take: limit };
-    const [items, total] = await this.find(query);
-    const totalPages = Math.ceil(total / limit);
-    return { items: items.map(item => ({...item, title: this.trimText(item.title, 2), description: this.trimText(item.description, 2)})), total, totalPages };
+    const articles = await this.model.findAll({
+      where: { user_id },
+      order: [['created_at', 'DESC']],
+      limit,
+      offset,
+      attributes: ['id', 'title', 'description', 'created_at', 'updated_at'],
+    });
+    const totalItems = await this.model.count({ where: { user_id } });
+    const totalPages = Math.ceil(totalItems / limit);
+    return { 
+      articles: articles.map(article => ({
+        ...article.dataValues,
+        title: this.trimText(article.dataValues.title, 50),
+        description: this.trimText(article.dataValues.description, 100),
+      })), 
+      totalItems, 
+      totalPages 
+    };
   }
-  trimText(text, lineCount) {
-    const words = text.split(' ');
-    let trimmedText = '';
-    let line = 1;
-    for (let i = 0; i < words.length; i++) {
-      if ((trimmedText + words[i]).length > lineCount * 50) {
-        if (line === lineCount) {
-          return trimmedText + '...';
-        }
-        line++;
-        trimmedText += '\n';
-      }
-      trimmedText += ' ' + words[i];
-    }
-    return trimmedText;
+  trimText(text, maxLength) {
+    return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
   }
 }
 module.exports = new ArticleRepository();
