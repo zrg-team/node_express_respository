@@ -4,27 +4,29 @@ const response = require('../utils/response');
 const ApiError = require('../utils/ApiError');
 const auth = require('../libs/auth');
 const ArticleRepository = require('../repositories/ArticleRepository');
-async function getArticleListByUser(req, res) {
+async function getArticleDetail(req, res) {
   try {
-    const userId = req.params.user_id;
-    const page = req.params.page || 1;
-    const limit = req.params.limit || 10;
-    if (isNaN(userId)) {
+    // Verify if the user is logged in
+    const token = req.headers.authorization.split(' ')[1];
+    auth.verify(token, (err, user) => {
+      if (err) {
+        throw new ApiError('User is not authenticated', 401);
+      }
+    });
+    const articleId = req.params.article_id;
+    if (isNaN(articleId)) {
       throw new ApiError('Wrong format.', 422);
     }
-    const user = await User.findById(userId);
-    if (!user) {
-      throw new ApiError('User not found', 404);
+    const article = await ArticleRepository.get(articleId);
+    if (!article) {
+      throw new ApiError('This article is not found', 404);
     }
-    if (!auth.verify(user)) {
-      throw new ApiError('User not logged in', 403);
-    }
-    const { articles, totalItems, totalPages } = await ArticleRepository.getArticlesByUser(userId, page, limit);
-    articles.forEach(article => {
-      article.title = article.title.length > 100 ? `${article.title.substring(0, 100)}...` : article.title;
-      article.description = article.description.length > 200 ? `${article.description.substring(0, 200)}...` : article.description;
+    // Return additional article details
+    response(res).success({ 
+      title: article.title,
+      description: article.description,
+      created_at: article.created_at
     });
-    response(res).success({ articles, totalItems, totalPages });
   } catch (error) {
     if (error instanceof ApiError) {
       response(res).error(error, error.statusCode);
@@ -34,5 +36,6 @@ async function getArticleListByUser(req, res) {
   }
 }
 module.exports = {
+  getArticleDetail,
   getArticleListByUser,
 };

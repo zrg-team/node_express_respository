@@ -7,24 +7,18 @@ class ArticleRepository extends BaseRepository {
   async get(articleId) {
     return this.findById(articleId);
   }
-  async getArticlesByUser(user_id, page = 1, limit = 10) {
+  async getByUserId(user_id, page = 1, limit = 10) {
     const offset = (page - 1) * limit;
-    const articles = await this.model.findAll({
-      where: { user_id },
-      order: [['created_at', 'DESC']],
-      limit,
-      offset,
-      attributes: ['id', 'title', 'description', 'created_at', 'updated_at'],
-    });
-    const totalItems = await this.model.count({ where: { user_id } });
-    const totalPages = Math.ceil(totalItems / limit);
+    const query = { where: { user_id }, order: { created_at: 'DESC' }, skip: offset, take: limit };
+    const [items, total] = await this.find(query);
+    const totalPages = Math.ceil(total / limit);
     return { 
-      articles: articles.map(article => ({
-        ...article.dataValues,
-        title: this.trimText(article.dataValues.title, 50),
-        description: this.trimText(article.dataValues.description, 100),
+      items: items.map(item => ({
+        ...item, 
+        title: this.trimText(item.title, 50), 
+        description: this.trimText(item.description, 100)
       })), 
-      totalItems, 
+      total, 
       totalPages 
     };
   }

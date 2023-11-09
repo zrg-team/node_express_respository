@@ -1,4 +1,3 @@
-// PATH: /libs/auth.js
 const jwt = require('jsonwebtoken')
 const status = require('http-status')
 const ApiError = require('../utils/api-error')
@@ -15,4 +14,4 @@ const utils = {
     return jwt.sign(payload, config.jwt.secret, { expiresIn: '1h' });
   }
 }
-// ... rest of the code
+module.exports = utils;
