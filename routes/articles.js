@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getArticleList, getArticleDetail, getArticleListByUser, getArticleDetailByUser } = require('../controllers/articles');
 const { check, validationResult } = require('express-validator');
+const authService = require('../services/authService');
 // Existing routes...
 router.get('/api/articles/user/:user_id/:article_id', [
   check('user_id').isNumeric().withMessage('Wrong format.'),
@@ -19,6 +20,19 @@ router.get('/api/articles/user/:user_id/:article_id', [
       }
       res.json({ status: 200, article: data });
     })
+    .catch(next);
+});
+router.get('/api/articles/user/:user_id/:page', authService.all(), [
+  check('user_id').isNumeric().withMessage('Wrong format.'),
+  check('page').isNumeric().withMessage('Wrong format.').isInt({ gt: 0 }).withMessage('Page must be greater than 0.')
+], (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+  const { user_id, page } = req.params;
+  getArticleListByUser(user_id, page)
+    .then(data => res.json(data))
     .catch(next);
 });
 module.exports = router;
