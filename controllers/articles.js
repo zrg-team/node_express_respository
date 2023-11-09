@@ -4,7 +4,7 @@ const response = require('../utils/response');
 const ApiError = require('../utils/ApiError');
 const auth = require('../libs/auth');
 const ArticleRepository = require('../repositories/ArticleRepository');
-async function getArticleListByUser(req, res) {
+async function getArticleDetail(req, res) {
   try {
     // Verify if the user is logged in
     const token = req.headers.authorization.split(' ')[1];
@@ -14,27 +14,21 @@ async function getArticleListByUser(req, res) {
       }
     });
     const userId = req.params.user_id;
-    const page = req.query.page || 1;
-    const limit = req.query.limit || 10;
-    const offset = (page - 1) * limit;
-    // Get articles by user id
-    const articles = await ArticleRepository.getByUserId(userId, limit, offset);
-    if (!articles) {
-      throw new ApiError('No articles found for this user', 404);
+    const articleId = req.params.article_id;
+    // Get article by article id
+    const article = await ArticleRepository.getById(articleId);
+    if (!article) {
+      throw new ApiError('No article found with this id', 404);
     }
-    // Trim title and description
-    articles.forEach(article => {
-      article.title = article.title.length > 100 ? article.title.substring(0, 97) + '...' : article.title;
-      article.description = article.description.length > 200 ? article.description.substring(0, 197) + '...' : article.description;
-    });
-    // Get total articles count
-    const totalItems = await ArticleRepository.countByUserId(userId);
-    const totalPages = Math.ceil(totalItems / limit);
-    // Return articles list
+    // Check if the user is authorized to view the article
+    if (article.user_id !== userId) {
+      throw new ApiError('User is not authorized to view this article', 403);
+    }
+    // Return article detail
     response(res).success({ 
-      articles,
-      totalItems,
-      totalPages
+      title: article.title,
+      description: article.description,
+      created_at: article.created_at
     });
   } catch (error) {
     if (error instanceof ApiError) {
@@ -45,5 +39,5 @@ async function getArticleListByUser(req, res) {
   }
 }
 module.exports = {
-  getArticleListByUser,
+  getArticleDetail,
 };
