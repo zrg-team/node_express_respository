@@ -55,10 +55,15 @@ module.exports = function (sequelize, DataTypes) {
     avatar_file_id: {
       type: DataTypes.INTEGER(11),
       allowNull: true
+    },
+    username: {
+      type: DataTypes.STRING(256),
+      allowNull: false,
+      unique: true
     }
   }, {
     hooks,
-    tableName: 'user'
+    tableName: 'users'
   })
   User.associate = (factory) => {
     factory.User.belongsTo(factory.UserType, {
@@ -66,8 +71,14 @@ module.exports = function (sequelize, DataTypes) {
       foreignKey: 'user_type_id',
       sourceKey: 'id'
     })
+    factory.User.hasMany(factory.Article, {
+      as: 'articles',
+      foreignKey: 'user_id',
+      sourceKey: 'id'
+    })
     factory.User.associationModels = {
-      userTypeOfUser: factory.UserType
+      userTypeOfUser: factory.UserType,
+      articles: factory.Article
     }
   }
   return User
