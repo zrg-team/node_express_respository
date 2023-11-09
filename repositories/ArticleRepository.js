@@ -4,11 +4,14 @@ class ArticleRepository extends BaseRepository {
   constructor () {
     super('article')
   }
-  async getArticle(user_id, article_id) {
+  async getArticle(article_id) {
+    if (typeof article_id !== 'number') {
+      throw new Error('Wrong format.')
+    }
     const Article = RepositoryHelper.getModel('article')
-    const article = await Article.findOne({ where: { id: article_id, user_id: user_id } })
+    const article = await Article.findOne({ where: { id: article_id } })
     if (!article) {
-      throw new Error('Unauthorized or Article not found')
+      throw new Error('This article is not found')
     }
     return article
   }

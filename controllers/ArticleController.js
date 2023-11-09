@@ -1,26 +1,27 @@
-const ArticleController = (user) => {
-  const getArticleDetails = async (req, res, next) => {
+const ArticleRepository = require('../repositories/ArticleRepository')
+const ApiError = require('../utils/api-error')
+class ArticleController {
+  ...
+  async getArticleDetails(req, res, next) {
     try {
-      const { id } = req.params;
-      const { user_id } = req.body;
-      if (user_id !== user.id) {
-        return res.status(403).json({ msg: 'User not authorized' });
+      if (isNaN(req.params.id)) {
+        throw new ApiError(400, 'Wrong format.')
       }
-      const article = await Article.findOne({
-        where: { id, user_id },
-        include: ['user']
-      });
+      const article = await ArticleRepository.getArticle(req.user.id, req.params.id)
       if (!article) {
-        return res.status(404).json({ msg: 'Article not found' });
+        throw new ApiError(404, 'This article is not found')
       }
-      return res.status(200).json({ article });
+      res.status(200).json({
+        status: 200,
+        article: article
+      })
     } catch (err) {
-      return next(err);
+      if (err instanceof ApiError) {
+        next(err)
+      } else {
+        next(new ApiError(500, err.message))
+      }
     }
-  };
-  return {
-    getArticleDetails,
-    // other methods...
-  };
-};
-module.exports = ArticleController;
+  }
+}
+module.exports = new ArticleController()
