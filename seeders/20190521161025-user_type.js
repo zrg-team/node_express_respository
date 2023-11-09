@@ -1,18 +1,25 @@
 'use strict'
-
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.bulkInsert('user_type', [{
-      code: 'ADMIN'
+    return queryInterface.bulkInsert('user_types', [{
+      code: 'ADMIN',
+      title: 'Administrator',
+      created_at: new Date(),
+      updated_at: new Date()
     }, {
-      code: 'USER'
+      code: 'USER',
+      title: 'User',
+      created_at: new Date(),
+      updated_at: new Date()
     }, {
-      code: 'CUSTOMTER'
+      code: 'CUSTOMER',
+      title: 'Customer',
+      created_at: new Date(),
+      updated_at: new Date()
     }], {})
   },
-
   down: (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete('user_type', {
+    return queryInterface.bulkDelete('user_types', {
       id: {
         [Sequelize.Op.in]: [1, 2, 3]
       }
