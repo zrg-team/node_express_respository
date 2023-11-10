@@ -1,6 +1,6 @@
 /* jshint indent: 2 */
 module.exports = function (sequelize, DataTypes) {
-  return sequelize.define('articles', {
+  const Article = sequelize.define('articles', {
     id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
@@ -16,23 +16,30 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: true
     },
     title: {
-      type: DataTypes.STRING(64),
+      type: DataTypes.STRING(255),
       allowNull: true
     },
     description: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.TEXT,
       allowNull: true
     },
     user_id: {
       type: DataTypes.INTEGER(11),
-      allowNull: true,
-      references: {
-        model: 'users',
-        key: 'id'
-      }
+      allowNull: true
     }
   }, {
     tableName: 'articles',
     timestamps: false
-  })
-}
+  });
+  Article.associate = (factory) => {
+    Article.belongsTo(factory.User, {
+      as: 'user',
+      foreignKey: 'user_id',
+      sourceKey: 'id'
+    });
+    Article.associationModels = {
+      user: factory.User
+    };
+  };
+  return Article;
+};

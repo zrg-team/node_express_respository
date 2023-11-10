@@ -38,6 +38,14 @@ module.exports = function (sequelize, DataTypes) {
     username: {
       type: DataTypes.STRING(255),
       allowNull: false
+    },
+    user_type_id: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      references: {
+        model: 'user_type',
+        key: 'id'
+      }
     }
   }, {
     tableName: 'users',
