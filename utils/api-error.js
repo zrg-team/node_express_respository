@@ -28,4 +28,9 @@ class ArticleNotFoundError extends ApiError {
     super('This article is not found', httpStatus.NOT_FOUND)
   }
 }
-module.exports = { ApiError, InvalidIdError, ArticleNotFoundError }
+class UnauthorizedError extends ApiError {
+  constructor() {
+    super('You are not authorized to view this article', httpStatus.FORBIDDEN)
+  }
+}
+module.exports = { ApiError, InvalidIdError, ArticleNotFoundError, UnauthorizedError }
