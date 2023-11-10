@@ -2,7 +2,7 @@
 module.exports = function (sequelize, DataTypes) {
   const Article = sequelize.define('articles', {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
@@ -16,16 +16,20 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: true
     },
     title: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(64),
       allowNull: true
     },
     description: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING(255),
       allowNull: true
     },
     user_id: {
-      type: DataTypes.INTEGER,
-      allowNull: true
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      references: {
+        model: 'users',
+        key: 'id'
+      }
     }
   }, {
     tableName: 'articles',
