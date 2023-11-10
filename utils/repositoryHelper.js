@@ -70,4 +70,6 @@ class RepositoryHelper {
   }
 }
 
+// Comment
+
 module.exports = new RepositoryHelper(dbService.database)
