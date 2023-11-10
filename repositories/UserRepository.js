@@ -41,5 +41,37 @@ class UserRepository extends BaseRepository {
       throw error
     }
   }
+  async updateUser(userId, userData) {
+    try {
+      const existingUser = await User.findOne({
+        where: { id: userId }
+      })
+      if (!existingUser) {
+        throw new Error('User not found')
+      }
+      const emailExists = await User.findOne({
+        where: { 
+          email: userData.email,
+          id: {
+            [Op.ne]: userId
+          }
+        }
+      })
+      if (emailExists) {
+        throw new Error('Email already exists')
+      }
+      const hashedPassword = await bcrypt.hash(userData.password, 10)
+      const user = await User.update({
+        name: userData.name,
+        email: userData.email,
+        password: hashedPassword
+      }, {
+        where: { id: userId }
+      })
+      return user
+    } catch (error) {
+      throw error
+    }
+  }
 }
 module.exports = new UserRepository()

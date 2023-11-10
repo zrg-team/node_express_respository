@@ -1,13 +1,13 @@
 const status = require('http-status')
 const ApiError = require('../utils/api-error')
-
 module.exports = (res = {}) => {
   const isDebug = process.env.DEBUG === 'true'
   return {
     success: (data) => {
+      const { id, name, email } = data;
       return res
         .status(200)
-        .json({ success: true, ...data })
+        .json({ success: true, id, name, email })
     },
     error: (err) => {
       if (err instanceof ApiError && err.status === status.BAD_REQUEST) {

@@ -20,17 +20,17 @@ class ApiError extends ExtendableError {
 }
 class InvalidIdError extends ApiError {
   constructor() {
-    super('Wrong format.', httpStatus.BAD_REQUEST)
+    super('Invalid user ID.', httpStatus.BAD_REQUEST)
   }
 }
-class ArticleNotFoundError extends ApiError {
+class UserNotFoundError extends ApiError {
   constructor() {
-    super('This article is not found', httpStatus.NOT_FOUND)
+    super('User not found.', httpStatus.NOT_FOUND)
   }
 }
-class UnauthorizedError extends ApiError {
+class EmailAlreadyRegisteredError extends ApiError {
   constructor() {
-    super('You are not authorized to view this article', httpStatus.FORBIDDEN)
+    super('Email is already registered.', httpStatus.BAD_REQUEST)
   }
 }
-module.exports = { ApiError, InvalidIdError, ArticleNotFoundError, UnauthorizedError }
+module.exports = { ApiError, InvalidIdError, UserNotFoundError, EmailAlreadyRegisteredError }

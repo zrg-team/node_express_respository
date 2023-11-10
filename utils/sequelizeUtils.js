@@ -1,4 +1,5 @@
 const { Op, col, fn, Model, Sequelize } = require('sequelize')
+const bcrypt = require('bcrypt');
 const sequelizeOP = {
   notIn: Op.notIn,
   gt: Op.gt,
@@ -9,37 +10,36 @@ const sequelizeFunctions = {
   count: (field) => fn('COUNT', col(`${field}`)),
   sum: (field) => fn('SUM', col(`${field}`))
 }
-const getArticleList = async (userId, page) => {
-  const model = Model.getModel('articles');
-  const pageSize = 10;
-  const offset = (page - 1) * pageSize;
-  const result = await model.findAndCountAll({
+const updateUser = async (userId, updatedData) => {
+  const model = Model.getModel('users');
+  // Check if user exists
+  const user = await model.findOne({ where: { id: userId } });
+  if (!user) {
+    throw new Error('User not found');
+  }
+  // Check if email is already registered
+  const existingEmailUser = await model.findOne({ where: { email: updatedData.email } });
+  if (existingEmailUser && existingEmailUser.id !== userId) {
+    throw new Error('Email is already registered');
+  }
+  // Encrypt password
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(updatedData.password, salt);
+  updatedData.password = hashedPassword;
+  updatedData.updated_at = Sequelize.literal('CURRENT_TIMESTAMP');
+  await model.update(updatedData, {
     where: {
-      user_id: userId
-    },
-    order: [
-      ['created_at', 'DESC']
-    ],
-    limit: pageSize,
-    offset: offset
-  });
-  const articles = result.rows.map(article => {
-    return {
-      title: article.title.length > 100 ? `${article.title.substring(0, 100)}...` : article.title,
-      description: article.description.length > 100 ? `${article.description.substring(0, 100)}...` : article.description,
-      created_at: article.created_at
+      id: userId
     }
   });
-  const totalItems = result.count;
-  const totalPages = Math.ceil(totalItems / pageSize);
   return {
-    articles,
-    totalItems,
-    totalPages
+    id: user.id,
+    name: user.name,
+    email: user.email
   };
 }
 module.exports = {
   sequelizeOP,
   sequelizeFunctions,
-  getArticleList
+  updateUser
 }

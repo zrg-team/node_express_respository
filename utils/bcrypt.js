@@ -1,7 +1,6 @@
+// PATH: /utils/bcrypt.js
 const bcrypt = require('bcrypt-nodejs')
-
 const ENV = process.env.NODE_ENV || 'development'
-
 const bcryptService = () => {
   const genSaltSync = () => {
     return bcrypt.genSaltSync()
@@ -13,16 +12,13 @@ const bcryptService = () => {
     const hash = bcrypt.hashSync(password, salt)
     return hash
   }
-
   const comparePassword = (pw, hash) => (
     bcrypt.compareSync(pw, hash)
   )
-
   return {
     password,
     genSaltSync,
     comparePassword
   }
 }
-
 module.exports = bcryptService()

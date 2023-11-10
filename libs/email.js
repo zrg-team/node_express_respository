@@ -2,7 +2,6 @@ const fs = require('fs')
 const nodemailer = require('nodemailer')
 const handlebars = require('handlebars')
 const config = require('../config')
-
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
   port: 587,
@@ -13,7 +12,6 @@ const transporter = nodemailer.createTransport({
     pass: config.email.secret
   }
 })
-
 function sendMail (type, data = {}, mailOptions = {}) {
   try {
     const source = fs.readFileSync(`../emails/${type}.email`, 'utf8')
@@ -38,7 +36,18 @@ function sendMail (type, data = {}, mailOptions = {}) {
     return false
   }
 }
-
+function sendConfirmationEmail (user, newEmail) {
+  const data = {
+    name: user.name,
+    link: `http://yourwebsite.com/confirm-email?token=${user.emailConfirmationToken}`
+  }
+  const mailOptions = {
+    to: newEmail,
+    subject: 'Confirm your new email address'
+  }
+  return sendMail('confirmEmail', data, mailOptions)
+}
 module.exports = {
-  sendMail
+  sendMail,
+  sendConfirmationEmail
 }

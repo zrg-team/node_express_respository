@@ -9,6 +9,14 @@
       "charset": "utf8",
       "collate": "utf8_general_ci"
     },
-    "log": true
+    "log": true,
+    "email": {
+      "server": "smtp.mailtrap.io",
+      "port": 2525,
+      "username": "your_username",
+      "password": "your_password",
+      "from": "no-reply@yourapp.com",
+      "template": "confirmation_email"
+    }
   }
 }

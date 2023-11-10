@@ -1,98 +1,42 @@
-const jwt = require('jsonwebtoken')
-const status = require('http-status')
-const ApiError = require('../utils/api-error')
-const config = require('../config')
-
-const utils = {
-  issue: (payload, expiresIn = 1000800) => jwt.sign(payload, config.jwt.secret, { expiresIn }),
-  verify: (token, cb) => jwt.verify(token, config.jwt.secret, {}, cb)
-}
-
-function authenticate (req) {
-  let tokenToVerify
-
-  if (req.header('Authorization')) {
-    const parts = req.header('Authorization').split(' ')
-
-    if (parts.length === 2) {
-      const scheme = parts[0]
-      const credentials = parts[1]
-
-      if (/^Bearer$/.test(scheme)) {
-        tokenToVerify = credentials
-      } else {
-        return ['Format for Authorization: Bearer [token]']
+const User = require('../models/User');
+const bcrypt = require('bcrypt');
+const nodemailer = require('nodemailer');
+async function updateUserProfile(id, name, email, password) {
+  const user = await User.findOne({ where: { id: id } });
+  if (!user) {
+    throw new ApiError('User does not exist', status.NOT_FOUND);
+  }
+  const emailExists = await User.findOne({ where: { email: email } });
+  if (emailExists && emailExists.id !== id) {
+    throw new ApiError('Email is already registered', status.BAD_REQUEST);
+  }
+  const hashedPassword = await bcrypt.hash(password, 10);
+  await User.update({ name: name, email: email, password: hashedPassword, updated_at: new Date() }, { where: { id: id } });
+  if(user.email !== email){
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'your-email@gmail.com',
+        pass: 'your-password'
       }
-    } else {
-      return ['Format for Authorization: Bearer [token]']
-    }
-  } else if (req.body && req.body.token) {
-    tokenToVerify = req.body.token
-    delete req.query.token
-  } else {
-    return ['No Authorization was found']
+    });
+    const mailOptions = {
+      from: 'your-email@gmail.com',
+      to: email,
+      subject: 'Confirm your email',
+      text: 'Click on the link to confirm your email: http://your-website.com/confirm-email?email=' + email
+    };
+    transporter.sendMail(mailOptions, function(error, info){
+      if (error) {
+        console.log(error);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
+    });
   }
-  return [null, tokenToVerify]
+  return { id: id, name: name, email: email };
 }
-
-function validateToken (type, token) {
-  switch (type) {
-    case 'ADMIN':
-      return token.type_code === 'ADMIN' && token.role_code === 'ADMIN'
-    case 'OPERATOR':
-      return token.type_code === 'ADMIN' && token.role_code === 'OPERATOR'
-  }
-}
-
-// usually: "Authorization: Bearer [token]" or "token: [token]"
-const service = {
-  all: () => (req, res, next) => {
-    const [err, tokenToVerify] = authenticate(req)
-    if (err) return next(new ApiError(err, status.UNAUTHORIZED))
-    return utils.verify(tokenToVerify, (err, thisToken) => {
-      if (err) return next(new ApiError(err, status.UNAUTHORIZED))
-      req.token = thisToken
-      return next()
-    })
-  },
-  accept: (roles) => {
-    return (req, res, next) => {
-      const [err, tokenToVerify] = authenticate(req)
-      if (err) return next(new ApiError(err, status.UNAUTHORIZED))
-      return utils.verify(tokenToVerify, (err, thisToken) => {
-        if (err) {
-          return next(new ApiError(err, status.UNAUTHORIZED))
-        }
-        const valid = roles.some((type) => {
-          return validateToken(type, thisToken)
-        })
-        if (!valid) {
-          return next(new ApiError('You dont have permission!', status.UNAUTHORIZED))
-        }
-        req.token = thisToken
-        return next()
-      })
-    }
-  },
-  public: () => (req, res, next) => {
-    if (
-      !req.header('Authorization') &&
-      !(req.body && req.body.token)
-    ) {
-      req.token = {}
-      return next()
-    }
-    const [err, tokenToVerify] = authenticate(req)
-    if (err) return next(new ApiError(err, status.UNAUTHORIZED))
-    return utils.verify(tokenToVerify, (err, thisToken) => {
-      if (err) return next(new ApiError(err, status.UNAUTHORIZED))
-      req.token = thisToken
-      return next()
-    })
-  }
-}
-
 module.exports = {
-  service,
-  utils
+  updateUserProfile,
+  checkUserExistence
 }
