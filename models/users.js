@@ -8,24 +8,24 @@ module.exports = function (sequelize, DataTypes) {
       autoIncrement: true
     },
     user_name: {
-      type: DataTypes.STRING(64),
-      allowNull: true
+      type: DataTypes.STRING(255),
+      allowNull: false
     },
     password: {
       type: DataTypes.STRING(255),
-      allowNull: true
+      allowNull: false
     },
     status: {
-      type: DataTypes.STRING(64),
-      allowNull: true
+      type: DataTypes.STRING(255),
+      allowNull: false
     },
     createdat: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: false
     },
     updatedat: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: false
     },
     avatar: {
       type: DataTypes.STRING(255),
@@ -36,8 +36,8 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: true
     },
     username: {
-      type: DataTypes.STRING(64),
-      allowNull: true
+      type: DataTypes.STRING(255),
+      allowNull: false
     }
   }, {
     tableName: 'users',
