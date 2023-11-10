@@ -2,8 +2,8 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert('articles', [{
-      title: 'First Article',
-      description: 'This is the first article',
+      title: 'Sample Article',
+      description: 'This is a sample article',
       user_id: 1,
       created_at: new Date(),
       updated_at: new Date()
