@@ -1,4 +1,3 @@
-// PATH: /models/articles.js
 /* jshint indent: 2 */
 module.exports = function (sequelize, DataTypes) {
   const Article = sequelize.define('articles', {
@@ -32,15 +31,12 @@ module.exports = function (sequelize, DataTypes) {
     tableName: 'articles',
     timestamps: false
   });
-  Article.associate = (factory) => {
-    Article.belongsTo(factory.User, {
+  Article.associate = (models) => {
+    Article.belongsTo(models.users, {
       as: 'user',
       foreignKey: 'user_id',
       sourceKey: 'id'
     });
-    Article.associationModels = {
-      user: factory.User
-    };
   };
   return Article;
 };

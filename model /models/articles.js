@@ -1,3 +1,4 @@
+// PATH: /models/articles.js
 /* jshint indent: 2 */
 module.exports = function (sequelize, DataTypes) {
   const Article = sequelize.define('articles', {
