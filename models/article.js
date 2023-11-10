@@ -1,53 +1,38 @@
-const hooks = {
-  beforeCreate: (article) => {
-    article.createdAt = new Date();
-    article.updatedAt = new Date();
-  },
-  beforeUpdate: (article) => {
-    article.updatedAt = new Date();
-  }
-}
+/* jshint indent: 2 */
 module.exports = function (sequelize, DataTypes) {
-  const Article = sequelize.define('article', {
+  return sequelize.define('articles', {
     id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
     title: {
-      type: DataTypes.STRING(256),
-      allowNull: false
+      type: DataTypes.STRING(64),
+      allowNull: true
     },
     description: {
-      type: DataTypes.STRING(1024),
+      type: DataTypes.STRING(255),
       allowNull: true
     },
     user_id: {
       type: DataTypes.INTEGER(11),
-      allowNull: false
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: true
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: true
+      allowNull: true,
+      references: {
+        model: 'users',
+        key: 'id'
+      }
     }
   }, {
-    hooks,
-    tableName: 'articles'
+    tableName: 'articles',
+    timestamps: false
   })
-  Article.associate = (factory) => {
-    factory.Article.belongsTo(factory.User, {
-      as: 'user',
-      foreignKey: 'user_id',
-      sourceKey: 'id'
-    })
-    factory.Article.associationModels = {
-      user: factory.User
-    }
-  }
-  return Article
 }
