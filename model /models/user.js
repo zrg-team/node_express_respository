@@ -1,4 +1,3 @@
-// PATH: /models/user.js
 const bcryptService = require('../utils/bcrypt')
 const hooks = {
   beforeCreate: (user) => {
@@ -16,7 +15,7 @@ const hooks = {
   }
 }
 module.exports = function (sequelize, DataTypes) {
-  const User = sequelize.define('users', {
+  const User = sequelize.define('user', {
     id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
@@ -56,15 +55,10 @@ module.exports = function (sequelize, DataTypes) {
     avatar_file_id: {
       type: DataTypes.INTEGER(11),
       allowNull: true
-    },
-    username: {
-      type: DataTypes.STRING(256),
-      allowNull: false,
-      unique: true
     }
   }, {
     hooks,
-    tableName: 'users'
+    tableName: 'user'
   })
   User.associate = (factory) => {
     factory.User.belongsTo(factory.UserType, {
@@ -72,14 +66,8 @@ module.exports = function (sequelize, DataTypes) {
       foreignKey: 'user_type_id',
       sourceKey: 'id'
     })
-    factory.User.hasMany(factory.Article, {
-      as: 'articles',
-      foreignKey: 'user_id',
-      sourceKey: 'id'
-    })
     factory.User.associationModels = {
-      userTypeOfUser: factory.UserType,
-      articles: factory.Article
+      userTypeOfUser: factory.UserType
     }
   }
   return User

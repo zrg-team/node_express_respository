@@ -16,30 +16,26 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: true
     },
     title: {
-      type: DataTypes.STRING(64),
+      type: DataTypes.STRING(255),
       allowNull: true
     },
     description: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.TEXT,
       allowNull: true
     },
     user_id: {
       type: DataTypes.INTEGER(11),
-      allowNull: true,
-      references: {
-        model: 'users',
-        key: 'id'
-      }
+      allowNull: true
     }
   }, {
     tableName: 'articles',
     timestamps: false
   });
-  Article.associate = function(models) {
-    Article.belongsTo(models.users, {
+  Article.associate = (models) => {
+    Article.belongsTo(models.User, {
       foreignKey: 'user_id',
       as: 'user'
     });
   };
   return Article;
-}
+};

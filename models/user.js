@@ -1,55 +1,46 @@
+/* jshint indent: 2 */
 module.exports = function (sequelize, DataTypes) {
-  const User = sequelize.define('user', {
+  return sequelize.define('users', {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
     user_name: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255),
       allowNull: false
     },
     password: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255),
       allowNull: false
     },
     status: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER(1),
       allowNull: false
     },
     createdat: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: false
     },
     updatedat: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: false
     },
     avatar: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255),
       allowNull: true
     },
     avatar_file_id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER(11),
       allowNull: true
     },
     username: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255),
       allowNull: false
     }
   }, {
-    tableName: 'users'
-  });
-  User.associate = (factory) => {
-    factory.User.hasMany(factory.Article, {
-      as: 'articles',
-      foreignKey: 'user_id',
-      sourceKey: 'id'
-    });
-    factory.User.associationModels = {
-      articles: factory.Article
-    };
-  };
-  return User;
-};
+    tableName: 'users',
+    timestamps: false
+  })
+}
