@@ -31,11 +31,15 @@ module.exports = function (sequelize, DataTypes) {
     tableName: 'articles',
     timestamps: false
   });
-  Article.associate = (models) => {
-    Article.belongsTo(models.User, {
+  Article.associate = (factory) => {
+    Article.belongsTo(factory.User, {
+      as: 'user',
       foreignKey: 'user_id',
-      as: 'user'
+      sourceKey: 'id'
     });
+    Article.associationModels = {
+      user: factory.User
+    };
   };
   return Article;
 };

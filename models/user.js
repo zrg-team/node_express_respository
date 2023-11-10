@@ -16,7 +16,7 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: false
     },
     status: {
-      type: DataTypes.INTEGER(1),
+      type: DataTypes.INTEGER(11),
       allowNull: false
     },
     createdat: {
