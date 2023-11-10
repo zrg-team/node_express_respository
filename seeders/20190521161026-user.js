@@ -1,16 +1,18 @@
 'use strict'
+const bcryptService = require('../utils/bcrypt')
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert('users', [{
-      user_name: 'First User',
-      password: 'password',
-      status: 'active',
-      createdat: new Date(),
-      updatedat: new Date(),
-      avatar: 'default.jpg',
-      avatar_file_id: 1,
-      username: 'firstuser',
-      name: 'First User'
+      user_name: 'admin',
+      password: bcryptService.password('admin'),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      status: 2,
+      avatar: null,
+      avatar_file_id: null,
+      username: 'admin',
+      user_type_id: 1,
+      name: 'Admin User'
     }], {})
   },
   down: (queryInterface, Sequelize) => {

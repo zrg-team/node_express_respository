@@ -1,4 +1,4 @@
-/* jshint indent: 2 */
+// PATH: /models/user.js
 const bcryptService = require('../utils/bcrypt')
 const hooks = {
   beforeCreate: (user) => {
@@ -24,27 +24,33 @@ module.exports = function (sequelize, DataTypes) {
       autoIncrement: true
     },
     user_name: {
-      type: DataTypes.STRING(255),
-      allowNull: false
+      type: DataTypes.STRING(256),
+      allowNull: false,
+      unique: true
     },
     password: {
-      type: DataTypes.STRING(255),
-      allowNull: false
+      type: DataTypes.STRING(128),
+      allowNull: true
     },
     status: {
-      type: DataTypes.INTEGER(1),
-      allowNull: false
+      type: DataTypes.INTEGER(4),
+      allowNull: false,
+      defaultValue: '1'
     },
     createdat: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: true
     },
     updatedat: {
       type: DataTypes.DATE,
+      allowNull: true
+    },
+    user_type_id: {
+      type: DataTypes.INTEGER(11),
       allowNull: false
     },
     avatar: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING(256),
       allowNull: true
     },
     avatar_file_id: {
@@ -52,20 +58,20 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: true
     },
     username: {
-      type: DataTypes.STRING(255),
-      allowNull: false
+      type: DataTypes.STRING(256),
+      allowNull: false,
+      unique: true
     },
-    user_type: {
-      type: DataTypes.ENUM,
-      values: ['ADMIN', 'USER', 'CUSTOMER'],
-      allowNull: false
+    name: {
+      type: DataTypes.STRING(256),
+      allowNull: true
     }
   }, {
     hooks,
     tableName: 'users',
     timestamps: false
   });
-  User.associate = function(models) {
+  User.associate = (models) => {
     User.belongsTo(models.UserType, {
       as: 'userTypeOfUser',
       foreignKey: 'user_type_id',
@@ -81,4 +87,4 @@ module.exports = function (sequelize, DataTypes) {
     }
   };
   return User;
-}
+};

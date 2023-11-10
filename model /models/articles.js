@@ -1,7 +1,6 @@
-// PATH: /models/articles.js
 /* jshint indent: 2 */
 module.exports = function (sequelize, DataTypes) {
-  const articles = sequelize.define('articles', {
+  const Article = sequelize.define('articles', {
     id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
@@ -10,15 +9,15 @@ module.exports = function (sequelize, DataTypes) {
     },
     created_at: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: true
     },
     updated_at: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: true
     },
     title: {
       type: DataTypes.STRING(255),
-      allowNull: false
+      allowNull: true
     },
     description: {
       type: DataTypes.TEXT,
@@ -26,21 +25,21 @@ module.exports = function (sequelize, DataTypes) {
     },
     user_id: {
       type: DataTypes.INTEGER(11),
-      allowNull: false,
-      references: {
-        model: 'users',
-        key: 'id'
-      }
+      allowNull: true
     }
   }, {
     tableName: 'articles',
     timestamps: false
   });
-  articles.associate = function(models) {
-    articles.belongsTo(models.users, {
+  Article.associate = (factory) => {
+    Article.belongsTo(factory.users, {
+      as: 'user',
       foreignKey: 'user_id',
-      as: 'user'
+      sourceKey: 'id'
     });
+    Article.associationModels = {
+      user: factory.users
+    };
   };
-  return articles;
-}
+  return Article;
+};

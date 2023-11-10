@@ -1,50 +1,47 @@
-module.exports = function (sequelize, DataTypes) {
-  const User = sequelize.define('users', {
+'use strict';
+module.exports = (sequelize, DataTypes) => {
+  const User = sequelize.define('User', {
     id: {
-      type: DataTypes.INTEGER(11),
+      type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
     user_name: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING,
       allowNull: false
     },
     password: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING,
       allowNull: false
     },
     status: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING,
       allowNull: false
     },
     createdat: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: false
     },
     updatedat: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: false
     },
     avatar: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING,
       allowNull: true
     },
     avatar_file_id: {
-      type: DataTypes.INTEGER(11),
+      type: DataTypes.INTEGER,
       allowNull: true
     },
     username: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING,
       allowNull: false
     },
-    user_type: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
-      references: {
-        model: 'user_type',
-        key: 'code'
-      }
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false
     }
   }, {
     tableName: 'users',
