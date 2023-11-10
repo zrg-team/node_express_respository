@@ -1,3 +1,4 @@
+// PATH: /models/articles.js
 /* jshint indent: 2 */
 module.exports = function (sequelize, DataTypes) {
   return sequelize.define('articles', {
@@ -9,18 +10,18 @@ module.exports = function (sequelize, DataTypes) {
     },
     created_at: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: true
     },
     updated_at: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: true
     },
     title: {
-      type: DataTypes.STRING(255),
-      allowNull: false
+      type: DataTypes.STRING(64),
+      allowNull: true
     },
     description: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING(255),
       allowNull: true
     },
     user_id: {

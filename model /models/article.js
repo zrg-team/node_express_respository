@@ -6,6 +6,14 @@ module.exports = function (sequelize, DataTypes) {
       primaryKey: true,
       autoIncrement: true
     },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
     title: {
       type: DataTypes.STRING(256),
       allowNull: false
@@ -17,27 +25,20 @@ module.exports = function (sequelize, DataTypes) {
     user_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: true
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: true
     }
   }, {
-    tableName: 'articles'
-  })
+    tableName: 'articles',
+    timestamps: false
+  });
   Article.associate = (factory) => {
     factory.Article.belongsTo(factory.User, {
-      as: 'userOfArticle',
+      as: 'user',
       foreignKey: 'user_id',
       sourceKey: 'id'
-    })
+    });
     factory.Article.associationModels = {
-      userOfArticle: factory.User
-    }
-  }
-  return Article
-}
+      user: factory.User
+    };
+  };
+  return Article;
+};
