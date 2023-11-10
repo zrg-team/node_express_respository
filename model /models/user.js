@@ -17,24 +17,22 @@ const hooks = {
 module.exports = function (sequelize, DataTypes) {
   const User = sequelize.define('users', {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
     user_name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true
+      type: DataTypes.STRING(255),
+      allowNull: true
     },
     password: {
-      type: DataTypes.STRING,
-      allowNull: false
+      type: DataTypes.STRING(255),
+      allowNull: true
     },
     status: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      defaultValue: '1'
+      type: DataTypes.STRING(255),
+      allowNull: true
     },
     createdat: {
       type: DataTypes.DATE,
@@ -45,23 +43,23 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: true
     },
     avatar: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255),
       allowNull: true
     },
     avatar_file_id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER(11),
       allowNull: true
     },
     username: {
-      type: DataTypes.STRING,
-      allowNull: false
+      type: DataTypes.STRING(255),
+      allowNull: true
     },
     name: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255),
       allowNull: true
     },
     user_type_id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER(11),
       allowNull: false
     }
   }, {
@@ -69,7 +67,7 @@ module.exports = function (sequelize, DataTypes) {
     tableName: 'users',
     timestamps: false
   });
-  User.associate = function(models) {
+  User.associate = (models) => {
     User.hasMany(models.Article, {
       foreignKey: 'user_id',
       as: 'articles'
@@ -78,11 +76,10 @@ module.exports = function (sequelize, DataTypes) {
       as: 'userTypeOfUser',
       foreignKey: 'user_type_id',
       sourceKey: 'id'
-    })
+    });
     User.associationModels = {
-      articles: models.Article,
       userTypeOfUser: models.UserType
-    };
+    }
   };
   return User;
 };

@@ -7,7 +7,7 @@ module.exports = {
       password: bcryptService.password('admin'),
       createdAt: new Date(),
       updatedAt: new Date(),
-      status: 2,
+      status: 'active',
       avatar: null,
       avatar_file_id: null,
       username: 'admin',

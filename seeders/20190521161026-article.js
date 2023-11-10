@@ -6,7 +6,7 @@ module.exports = {
       description: 'This is a sample article',
       user_id: 1,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     }], {})
   },
   down: (queryInterface, Sequelize) => {

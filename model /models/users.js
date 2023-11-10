@@ -1,3 +1,5 @@
+// PATH: /models/users.js
+/* jshint indent: 2 */
 module.exports = function (sequelize, DataTypes) {
   const User = sequelize.define('users', {
     id: {
@@ -37,14 +39,6 @@ module.exports = function (sequelize, DataTypes) {
     username: {
       type: DataTypes.STRING(255),
       allowNull: false
-    },
-    user_type: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
-      references: {
-        model: 'user_type',
-        key: 'code'
-      }
     }
   }, {
     tableName: 'users',
