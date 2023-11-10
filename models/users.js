@@ -1,20 +1,4 @@
 /* jshint indent: 2 */
-const bcryptService = require('../utils/bcrypt')
-const hooks = {
-  beforeCreate: (user) => {
-    user.password = bcryptService.password(user.password) // eslint-disable-line no-param-reassign
-  },
-  beforeUpdate: (user) => {
-    if (user.changed('password')) {
-      user.password = bcryptService.password(user.password) // eslint-disable-line no-param-reassign
-    }
-  },
-  beforeBulkUpdate: (data) => {
-    if (data.attributes && data.attributes.password) {
-      data.attributes.password = bcryptService.password(data.attributes.password) // eslint-disable-line no-param-reassign
-    }
-  }
-}
 module.exports = function (sequelize, DataTypes) {
   const User = sequelize.define('users', {
     id: {
@@ -32,7 +16,7 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: false
     },
     status: {
-      type: DataTypes.INTEGER(1),
+      type: DataTypes.STRING(255),
       allowNull: false
     },
     createdat: {
@@ -55,30 +39,19 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.STRING(255),
       allowNull: false
     },
-    user_type: {
-      type: DataTypes.ENUM,
-      values: ['ADMIN', 'USER', 'CUSTOMER'],
+    name: {
+      type: DataTypes.STRING(255),
       allowNull: false
     }
   }, {
-    hooks,
     tableName: 'users',
     timestamps: false
   });
   User.associate = function(models) {
-    User.belongsTo(models.UserType, {
-      as: 'userTypeOfUser',
-      foreignKey: 'user_type_id',
-      sourceKey: 'id'
-    });
     User.hasMany(models.articles, {
       foreignKey: 'user_id',
       as: 'articles'
     });
-    User.associationModels = {
-      userTypeOfUser: models.UserType,
-      articles: models.articles
-    }
   };
   return User;
 }

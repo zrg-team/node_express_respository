@@ -1,3 +1,4 @@
+// PATH: /models/articles.js
 /* jshint indent: 2 */
 module.exports = function (sequelize, DataTypes) {
   return sequelize.define('articles', {
@@ -20,8 +21,8 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: false
     },
     description: {
-      type: DataTypes.STRING(255),
-      allowNull: false
+      type: DataTypes.TEXT,
+      allowNull: true
     },
     user_id: {
       type: DataTypes.INTEGER(11),

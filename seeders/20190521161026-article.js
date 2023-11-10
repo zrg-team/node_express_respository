@@ -1,15 +1,23 @@
-'use strict'
+'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert('articles', [{
-      title: 'Sample Article',
-      description: 'This is a sample article',
+      id: 1,
+      title: 'First Article',
+      description: 'This is the first article',
       user_id: 1,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }], {})
+      created_at: new Date(),
+      updated_at: new Date()
+    }, {
+      id: 2,
+      title: 'Second Article',
+      description: 'This is the second article',
+      user_id: 2,
+      created_at: new Date(),
+      updated_at: new Date()
+    }], {});
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete('articles', { id: { [Sequelize.Op.in]: [1] } }, {})
+    return queryInterface.bulkDelete('articles', null, {});
   }
-}
+};
