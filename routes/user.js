@@ -1,20 +1,12 @@
-// PATH: /routes/user.js
 const auth = require('.././libs/auth')
 const file = require('.././libs/files')
+const UserController = require('../controllers/UserController');
 const MODULE_NAME = 'user'
 const routes = {
   ...
-  'GET /articles': {
-    path: 'UserController.getArticles',
+  'POST /api/users/register': {
+    path: UserController.registerUser,
     middlewares: [
-      auth.utils.verify(),
-      file.all.none()
-    ]
-  },
-  'GET /api/articles/:id': {
-    path: 'UserController.getArticleDetails',
-    middlewares: [
-      auth.utils.verify(),
       file.all.none()
     ]
   }
