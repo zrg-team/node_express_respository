@@ -1,13 +1,13 @@
 module.exports = function (sequelize, DataTypes) {
   const Article = sequelize.define('article', {
     id: {
-      type: DataTypes.INTEGER(11),
+      type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
     title: {
-      type: DataTypes.STRING(256),
+      type: DataTypes.STRING,
       allowNull: false
     },
     description: {
@@ -15,19 +15,20 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: true
     },
     user_id: {
-      type: DataTypes.INTEGER(11),
+      type: DataTypes.INTEGER,
       allowNull: false
     },
-    createdAt: {
+    created_at: {
       type: DataTypes.DATE,
       allowNull: true
     },
-    updatedAt: {
+    updated_at: {
       type: DataTypes.DATE,
       allowNull: true
     }
   }, {
-    tableName: 'articles'
+    tableName: 'articles',
+    timestamps: false
   })
   Article.associate = (factory) => {
     factory.Article.belongsTo(factory.User, {

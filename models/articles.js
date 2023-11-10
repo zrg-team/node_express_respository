@@ -9,23 +9,23 @@ module.exports = function (sequelize, DataTypes) {
     },
     created_at: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: false
     },
     updated_at: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: false
     },
     title: {
       type: DataTypes.STRING(64),
       allowNull: true
     },
     description: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.TEXT,
       allowNull: true
     },
     user_id: {
       type: DataTypes.INTEGER(11),
-      allowNull: true,
+      allowNull: false,
       references: {
         model: 'users',
         key: 'id'
