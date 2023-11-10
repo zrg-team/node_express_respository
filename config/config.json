@@ -13,7 +13,7 @@
     "email": {
       "server": "smtp.mailtrap.io",
       "port": 2525,
-      "username": "your_username",
+      "username": "hello",
       "password": "your_password",
       "from": "no-reply@yourapp.com",
       "template": "confirmation_email"
