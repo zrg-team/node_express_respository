@@ -7,29 +7,29 @@ module.exports = function (sequelize, DataTypes) {
       primaryKey: true,
       autoIncrement: true
     },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: false
-    },
-    updated_at: {
-      type: DataTypes.DATE,
-      allowNull: false
-    },
     title: {
-      type: DataTypes.STRING(255),
-      allowNull: false
+      type: DataTypes.STRING(64),
+      allowNull: true
     },
     description: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING(255),
       allowNull: true
     },
     user_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
-        model: 'users',
+        model: 'user',
         key: 'id'
       }
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      allowNull: true
     }
   }, {
     tableName: 'articles',

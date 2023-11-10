@@ -72,6 +72,7 @@ module.exports = function (sequelize, DataTypes) {
       sourceKey: 'id'
     })
     factory.User.hasMany(factory.Article, {
+      as: 'articles',
       foreignKey: 'user_id',
       sourceKey: 'id'
     })
