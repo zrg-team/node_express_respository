@@ -1,5 +1,4 @@
 'use strict'
-const bcryptService = require('../utils/bcrypt')
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert('articles', [{

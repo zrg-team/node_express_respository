@@ -1,17 +1,19 @@
-// PATH /models/user.js
+// PATH model /models/user.js
 const bcryptService = require('../utils/bcrypt')
 const hooks = {
   beforeCreate: (user) => {
     user.password = bcryptService.password(user.password) // eslint-disable-line no-param-reassign
+    user.createdAt = new Date();
+    user.updatedAt = new Date();
   },
   beforeUpdate: (user) => {
-    if (user.changed('password')) {
-      user.password = bcryptService.password(user.password) // eslint-disable-line no-param-reassign
+    if (user.changed('password') || user.changed('user_name') || user.changed('status') || user.changed('avatar') || user.changed('avatar_file_id') || user.changed('username')) {
+      user.updatedAt = new Date();
     }
   },
   beforeBulkUpdate: (data) => {
-    if (data.attributes && data.attributes.password) {
-      data.attributes.password = bcryptService.password(data.attributes.password) // eslint-disable-line no-param-reassign
+    if (data.attributes && (data.attributes.password || data.attributes.user_name || data.attributes.status || data.attributes.avatar || data.attributes.avatar_file_id || data.attributes.username)) {
+      data.attributes.updatedAt = new Date();
     }
   }
 }
@@ -45,10 +47,6 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.DATE,
       allowNull: true
     },
-    user_type_id: {
-      type: DataTypes.INTEGER(11),
-      allowNull: false
-    },
     avatar: {
       type: DataTypes.STRING(256),
       allowNull: true
@@ -56,19 +54,24 @@ module.exports = function (sequelize, DataTypes) {
     avatar_file_id: {
       type: DataTypes.INTEGER(11),
       allowNull: true
+    },
+    username: {
+      type: DataTypes.STRING(256),
+      allowNull: false,
+      unique: true
     }
   }, {
     hooks,
-    tableName: 'user'
+    tableName: 'users'
   })
   User.associate = (factory) => {
-    factory.User.belongsTo(factory.UserType, {
-      as: 'userTypeOfUser',
-      foreignKey: 'user_type_id',
+    factory.User.hasMany(factory.Article, {
+      as: 'articles',
+      foreignKey: 'user_id',
       sourceKey: 'id'
     })
     factory.User.associationModels = {
-      userTypeOfUser: factory.UserType
+      articles: factory.Article
     }
   }
   return User

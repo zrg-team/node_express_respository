@@ -1,3 +1,4 @@
+// PATH: /seeders/20190521161026-user.js
 'use strict'
 const bcryptService = require('../utils/bcrypt')
 module.exports = {
