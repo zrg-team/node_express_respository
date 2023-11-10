@@ -1,5 +1,6 @@
+/* jshint indent: 2 */
 module.exports = function (sequelize, DataTypes) {
-  const Article = sequelize.define('article', {
+  return sequelize.define('articles', {
     id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
@@ -7,37 +8,31 @@ module.exports = function (sequelize, DataTypes) {
       autoIncrement: true
     },
     title: {
-      type: DataTypes.STRING(256),
-      allowNull: false
+      type: DataTypes.STRING(64),
+      allowNull: true
     },
     description: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING(255),
       allowNull: true
     },
     user_id: {
       type: DataTypes.INTEGER(11),
-      allowNull: false
+      allowNull: false,
+      references: {
+        model: 'user',
+        key: 'id'
+      }
     },
-    createdAt: {
+    created_at: {
       type: DataTypes.DATE,
       allowNull: true
     },
-    updatedAt: {
+    updated_at: {
       type: DataTypes.DATE,
       allowNull: true
     }
   }, {
-    tableName: 'articles'
+    tableName: 'articles',
+    timestamps: false
   })
-  Article.associate = (factory) => {
-    factory.Article.belongsTo(factory.User, {
-      as: 'userOfArticle',
-      foreignKey: 'user_id',
-      sourceKey: 'id'
-    })
-    factory.Article.associationModels = {
-      userOfArticle: factory.User
-    }
-  }
-  return Article
 }
