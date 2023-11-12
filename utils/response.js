@@ -1,6 +1,5 @@
 const status = require('http-status')
 const ApiError = require('../utils/api-error')
-
 module.exports = (res = {}) => {
   const isDebug = process.env.DEBUG === 'true'
   return {
@@ -24,6 +23,11 @@ module.exports = (res = {}) => {
       return res
         .status(code)
         .json({ success: false, msg })
+    },
+    articleDetails: (article) => {
+      return res
+        .status(200)
+        .json({ success: true, article })
     }
   }
 }
