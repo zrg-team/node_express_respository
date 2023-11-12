@@ -18,6 +18,11 @@ class ApiError extends ExtendableError {
     super(message, status)
   }
 }
+class ValidationError extends ApiError {
+  constructor (message = 'Validation Error') {
+    super(message, httpStatus.BAD_REQUEST)
+  }
+}
 class NotFoundError extends ApiError {
   constructor (message = 'Not found') {
     super(message, httpStatus.NOT_FOUND)
@@ -28,4 +33,4 @@ class BadRequestError extends ApiError {
     super(message, httpStatus.BAD_REQUEST)
   }
 }
-module.exports = { ApiError, NotFoundError, BadRequestError }
+module.exports = { ApiError, ValidationError, NotFoundError, BadRequestError }

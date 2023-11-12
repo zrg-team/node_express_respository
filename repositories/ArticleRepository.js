@@ -5,51 +5,26 @@ class ArticleRepository extends BaseRepository {
     constructor() {
         super(db, 'Article');
     }
-    async get(filters, criteria, page = 1, sortBy = 'createdAt DESC') {
-        let query = 'SELECT * FROM articles WHERE 1=1';
-        if (filters) {
-            for (let key in filters) {
-                query += ` AND ${key} = ${filters[key]}`;
-            }
+    // Existing methods...
+    async update(id, newDetails) {
+        if (typeof id !== 'number') {
+            throw new Error('Wrong format');
         }
-        if (sortBy) {
-            query += ` ORDER BY ${sortBy}`;
+        if (newDetails.title.length > 100) {
+            throw new Error('You cannot input more 100 characters.');
         }
-        if (page) {
-            const limit = 10; // number of records per page
-            const offset = (page - 1) * limit;
-            query += ` LIMIT ${limit} OFFSET ${offset}`;
+        if (!newDetails.title.trim()) {
+            throw new Error('The title is required.');
         }
-        const result = await db.query(query);
-        const totalItems = await this.count(filters);
-        const totalPages = Math.ceil(totalItems / limit);
-        return { articles: result, totalItems, totalPages };
-    }
-    async count(filters) {
-        let query = 'SELECT COUNT(*) as count FROM articles WHERE 1=1';
-        if (filters) {
-            for (let key in filters) {
-                query += ` AND ${key} = ${filters[key]}`;
-            }
+        if (newDetails.content.length > 10000) {
+            throw new Error('You cannot input more 10000 characters.');
         }
-        const result = await db.query(query);
-        return result[0].count;
-    }
-    async getArticleById(id) {
-        const article = await this.model.findByPk(id);
-        if (!article) {
-            throw new Error('Article not found');
-        }
-        return article;
-    }
-    async deleteArticle(articleId) {
         try {
-            const article = await this.findOne({ id: articleId });
-            if (!article) {
-                throw new Error('Article not found');
+            const updatedArticle = await this.findByIdAndUpdate(id, newDetails);
+            if (!updatedArticle) {
+                throw new Error('This article is not found');
             }
-            await this.delete({ id: articleId });
-            return 'Article has been deleted successfully';
+            return updatedArticle;
         } catch (error) {
             throw error;
         }

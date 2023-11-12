@@ -1,4 +1,3 @@
-// PATH: /libs/auth.js
 const jwt = require('jsonwebtoken')
 const status = require('http-status')
 const ApiError = require('../utils/api-error')
@@ -36,6 +35,8 @@ function validateToken (type, token) {
       return token.type_code === 'ADMIN' && token.role_code === 'ADMIN'
     case 'OPERATOR':
       return token.type_code === 'ADMIN' && token.role_code === 'OPERATOR'
+    case 'AUTHOR':
+      return token.type_code === 'AUTHOR' && token.role_code === 'AUTHOR'
   }
 }
 // usually: "Authorization: Bearer [token]" or "token: [token]"
