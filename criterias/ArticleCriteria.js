@@ -12,7 +12,7 @@ class ArticleCriteria extends ICriteria {
   }
   applySorting() {
     if (this.params.sort_by) {
-      this.query.orderBy(this.params.sort_by, this.params.orderBy || 'desc');
+      this.query.orderBy(this.params.sort_by, this.params.order || 'desc');
     }
     return this;
   }
