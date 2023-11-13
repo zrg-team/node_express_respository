@@ -15,7 +15,7 @@ const hooks = {
   }
 }
 module.exports = function (sequelize, DataTypes) {
-  const User = sequelize.define('users', {
+  const User = sequelize.define('user', {
     id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
@@ -43,6 +43,10 @@ module.exports = function (sequelize, DataTypes) {
     updatedAt: {
       type: DataTypes.DATE,
       allowNull: true
+    },
+    user_type_id: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false
     },
     avatar: {
       type: DataTypes.STRING(256),
