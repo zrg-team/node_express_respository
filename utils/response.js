@@ -3,10 +3,17 @@ const ApiError = require('../utils/api-error')
 module.exports = (res = {}) => {
   const isDebug = process.env.DEBUG === 'true'
   return {
-    successResponse: (message, data) => {
+    successResponse: (message, data, totalItems = null, totalPages = null) => {
+      const response = { success: true, message, data }
+      if (totalItems !== null) {
+        response.totalItems = totalItems
+      }
+      if (totalPages !== null) {
+        response.totalPages = totalPages
+      }
       return res
         .status(200)
-        .json({ success: true, message, data })
+        .json(response)
     },
     errorResponse: (message, err = null) => {
       if (err instanceof ApiError && err.status === status.BAD_REQUEST) {

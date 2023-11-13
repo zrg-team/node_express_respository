@@ -1,7 +1,6 @@
 const mapRoutes = require('express-routes-mapper')
 const path = require('path')
 const fs = require('fs')
-
 module.exports = (app) => {
   const directory = path.resolve(__dirname, '..', 'routes')
   const routeFiles = fs.readdirSync(directory)
@@ -10,4 +9,7 @@ module.exports = (app) => {
     const tmpRoutes = mapRoutes(definition.routes, 'controllers/')
     app.use(`/${definition.MODULE_NAME}`, tmpRoutes)
   })
+  // Add new route for getting the articles list
+  const dashboardController = require('../controllers/DashboardController')
+  app.get('/articles', dashboardController.getArticles)
 }
