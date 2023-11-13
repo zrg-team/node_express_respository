@@ -1,17 +1,16 @@
 const status = require('http-status')
 const ApiError = require('../utils/api-error')
-
 module.exports = (res = {}) => {
   const isDebug = process.env.DEBUG === 'true'
   return {
-    success: (data) => {
+    successResponse: (message, data) => {
       return res
         .status(200)
-        .json({ success: true, ...data })
+        .json({ success: true, message, data })
     },
-    error: (err) => {
+    errorResponse: (message, err = null) => {
       if (err instanceof ApiError && err.status === status.BAD_REQUEST) {
-        return res.status(err.status).json({ success: false, errors: err.message })
+        return res.status(err.status).json({ success: false, message, errors: err.message })
       }
       let msg = 'Internal server error'
       let code = status.INTERNAL_SERVER_ERROR
@@ -23,7 +22,8 @@ module.exports = (res = {}) => {
       }
       return res
         .status(code)
-        .json({ success: false, msg })
-    }
+        .json({ success: false, message: message || msg })
+    },
+    ...otherMethods
   }
 }
