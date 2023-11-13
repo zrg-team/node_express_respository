@@ -17,6 +17,12 @@ class ApiError extends ExtendableError {
   constructor (message, status = httpStatus.INTERNAL_SERVER_ERROR) {
     super(message, status)
   }
+  static wrongFormat(param) {
+    return new ApiError(`${param} has wrong format.`, httpStatus.BAD_REQUEST)
+  }
+  static pageMustBeGreaterThanZero() {
+    return new ApiError('Page must be greater than 0.', httpStatus.BAD_REQUEST)
+  }
   static notFound(message = 'Not found') {
     return new ApiError(message, httpStatus.NOT_FOUND)
   }

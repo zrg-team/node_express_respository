@@ -37,6 +37,8 @@ function validateToken (type, token) {
       return token.type_code === 'ADMIN' && token.role_code === 'ADMIN'
     case 'OPERATOR':
       return token.type_code === 'ADMIN' && token.role_code === 'OPERATOR'
+    case 'ARTICLE':
+      return token.type_code === 'ARTICLE' && token.role_code === 'ARTICLE'
   }
 }
 function validateArticleOwner (req, res, next) {

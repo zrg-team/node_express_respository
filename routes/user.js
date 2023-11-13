@@ -60,6 +60,13 @@ const routes = {
       auth.service.all(),
       file.all.none()
     ]
+  },
+  'GET /api/articles': {
+    path: 'ArticleController.getArticles',
+    middlewares: [
+      auth.service.all(),
+      file.all.none()
+    ]
   }
 }
 module.exports = {
