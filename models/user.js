@@ -1,3 +1,4 @@
+// PATH: /models/user.js
 const bcryptService = require('../utils/bcrypt')
 const hooks = {
   beforeCreate: (user) => {

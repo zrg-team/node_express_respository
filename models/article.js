@@ -1,7 +1,6 @@
 // PATH: /models/article.js
-/* jshint indent: 2 */
 module.exports = function (sequelize, DataTypes) {
-  return sequelize.define('articles', {
+  const Article = sequelize.define('articles', {
     id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
@@ -35,5 +34,12 @@ module.exports = function (sequelize, DataTypes) {
   }, {
     tableName: 'articles',
     timestamps: false
-  })
-}
+  });
+  Article.associate = function(models) {
+    Article.belongsTo(models.users, {
+      foreignKey: 'user_id',
+      as: 'user'
+    });
+  };
+  return Article;
+};

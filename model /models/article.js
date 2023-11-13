@@ -1,33 +1,39 @@
+// PATH: /models/article.js
 module.exports = function (sequelize, DataTypes) {
-  const Article = sequelize.define('article', {
+  const Article = sequelize.define('articles', {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
     title: {
-      type: DataTypes.STRING,
-      allowNull: false
+      type: DataTypes.STRING(64),
+      allowNull: true
     },
     description: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255),
       allowNull: true
     },
     user_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: true
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: true
+      type: DataTypes.INTEGER(11),
+      allowNull: true,
+      references: {
+        model: 'users',
+        key: 'id'
+      }
     }
   }, {
-    tableName: 'articles'
+    tableName: 'articles',
+    timestamps: false
   })
   Article.associate = (factory) => {
     factory.Article.belongsTo(factory.User, {
