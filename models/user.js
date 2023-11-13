@@ -56,6 +56,10 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.STRING(256),
       allowNull: false,
       unique: true
+    },
+    name: {
+      type: DataTypes.STRING(256),
+      allowNull: true
     }
   }, {
     hooks,
