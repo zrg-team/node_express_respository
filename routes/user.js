@@ -1,8 +1,7 @@
+// PATH: /routes/user.js
 const auth = require('.././libs/auth')
 const file = require('.././libs/files')
-
 const MODULE_NAME = 'user'
-
 const routes = {
   'POST /': {
     path: 'UserController.create',
@@ -54,9 +53,15 @@ const routes = {
     middlewares: [
       file.all.none()
     ]
+  },
+  'GET /api/articles/:id': {
+    path: 'ArticleController.getArticleDetails',
+    middlewares: [
+      auth.service.all(),
+      file.all.none()
+    ]
   }
 }
-
 module.exports = {
   routes,
   MODULE_NAME

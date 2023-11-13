@@ -1,5 +1,4 @@
 const httpStatus = require('http-status')
-
 class ExtendableError extends Error {
   constructor (message, status) {
     super(message)
@@ -9,7 +8,6 @@ class ExtendableError extends Error {
     Error.captureStackTrace(this, this.constructor.name)
   }
 }
-
 class ApiError extends ExtendableError {
   /**
      * Creates an API error.
@@ -19,6 +17,11 @@ class ApiError extends ExtendableError {
   constructor (message, status = httpStatus.INTERNAL_SERVER_ERROR) {
     super(message, status)
   }
+  static notFound(message = 'Not found') {
+    return new ApiError(message, httpStatus.NOT_FOUND)
+  }
+  static badRequest(message = 'Bad request') {
+    return new ApiError(message, httpStatus.BAD_REQUEST)
+  }
 }
-
 module.exports = ApiError

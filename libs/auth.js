@@ -2,22 +2,19 @@ const jwt = require('jsonwebtoken')
 const status = require('http-status')
 const ApiError = require('../utils/api-error')
 const config = require('../config')
-
+const User = require('../models/User')
+const Article = require('../models/Article')
 const utils = {
   issue: (payload, expiresIn = 1000800) => jwt.sign(payload, config.jwt.secret, { expiresIn }),
   verify: (token, cb) => jwt.verify(token, config.jwt.secret, {}, cb)
 }
-
 function authenticate (req) {
   let tokenToVerify
-
   if (req.header('Authorization')) {
     const parts = req.header('Authorization').split(' ')
-
     if (parts.length === 2) {
       const scheme = parts[0]
       const credentials = parts[1]
-
       if (/^Bearer$/.test(scheme)) {
         tokenToVerify = credentials
       } else {
@@ -34,7 +31,6 @@ function authenticate (req) {
   }
   return [null, tokenToVerify]
 }
-
 function validateToken (type, token) {
   switch (type) {
     case 'ADMIN':
@@ -43,8 +39,19 @@ function validateToken (type, token) {
       return token.type_code === 'ADMIN' && token.role_code === 'OPERATOR'
   }
 }
-
-// usually: "Authorization: Bearer [token]" or "token: [token]"
+function validateArticleOwner (req, res, next) {
+  const userId = req.token.id
+  const articleId = req.params.id
+  Article.findById(articleId, (err, article) => {
+    if (err || !article) {
+      return next(new ApiError('Article not found', status.NOT_FOUND))
+    }
+    if (article.user_id !== userId) {
+      return next(new ApiError('You are not the author of this article', status.UNAUTHORIZED))
+    }
+    next()
+  })
+}
 const service = {
   all: () => (req, res, next) => {
     const [err, tokenToVerify] = authenticate(req)
@@ -89,9 +96,9 @@ const service = {
       req.token = thisToken
       return next()
     })
-  }
+  },
+  validateArticleOwner
 }
-
 module.exports = {
   service,
   utils
