@@ -1,16 +1,21 @@
 const ArticleRepository = require('../repositories/ArticleRepository')
+const ApiError = require('../utils/ApiError')
 class ArticleController {
   async getArticleDetail (req, res, next) {
     try {
       const { id } = req.params
       if (!id) {
-        return res.status(400).json({ message: 'Invalid article id' })
+        throw new ApiError('Invalid article id', 400)
       }
       const article = await ArticleRepository.getArticleDetail(id)
       if (!article) {
-        return res.status(404).json({ message: 'Article not found' })
+        throw new ApiError('Article not found', 404)
       }
-      return res.json(article)
+      return res.json({
+        title: article.title,
+        description: article.description,
+        created_at: article.created_at
+      })
     } catch (error) {
       next(error)
     }
