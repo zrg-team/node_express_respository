@@ -4,6 +4,32 @@ class ArticleRepository extends BaseRepository {
   constructor (model) {
     super(model)
   }
+  async validateArticleId (id) {
+    const article = await this.model.findByPk(id)
+    return !!article
+  }
+  async getArticleDetail (id) {
+    if (!id) {
+      throw new Error('Invalid article id')
+    }
+    const article = await this.model.findByPk(id)
+    if (!article) {
+      throw new Error('Article not found')
+    }
+    return {
+      title: article.title,
+      description: article.description,
+      created_at: article.created_at
+    }
+  }
+  async recordUserArticleReading(userId, articleId) {
+    const userArticle = await this.model.create({
+      user_id: userId,
+      article_id: articleId,
+      read_at: new Date()
+    })
+    return userArticle
+  }
   async getArticles (page) {
     if (page < 1) {
       throw new Error('Page number must be a positive integer.')
@@ -21,36 +47,16 @@ class ArticleRepository extends BaseRepository {
       ...pagination
     }
   }
-  async getArticleDetail (id) {
-    if (!id) {
-      throw new Error('Invalid article id')
-    }
-    const article = await this.model.findByPk(id)
-    if (!article) {
-      throw new Error('Article not found')
-    }
-    return {
-      title: article.title,
-      description: article.description,
-      created_at: article.created_at
-    }
+  formatArticles (articles) {
+    return articles.map(article => ({
+      ...article,
+      title: this.trimToTwoLines(article.title),
+      description: this.trimToTwoLines(article.description)
+    }))
   }
-  formatArticles(articles) {
-    return articles.map(article => {
-      return {
-        ...article,
-        title: this.trimText(article.title, 2),
-        description: this.trimText(article.description, 2)
-      }
-    })
+  trimToTwoLines (text) {
+    const lines = text.split('\n')
+    return lines.length > 2 ? lines.slice(0, 2).join('\n') : text
   }
-  trimText(text, lines) {
-    const maxLength = lines * 50 // Assuming each line can contain 50 characters
-    if (text.length > maxLength) {
-      return text.substring(0, maxLength) + '...'
-    }
-    return text
-  }
-  // ... other methods
 }
 module.exports = ArticleRepository

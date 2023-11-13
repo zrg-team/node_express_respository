@@ -1,4 +1,5 @@
 const ArticleRepository = require('../repositories/ArticleRepository')
+const UserRepository = require('../repositories/UserRepository')
 const response = require('../utils/response')
 const util = require('../utils/util')
 const ApiError = require('../utils/ApiError')
@@ -18,6 +19,20 @@ class ArticleController {
         description: article.description,
         created_at: article.created_at
       })
+    } catch (error) {
+      next(error)
+    }
+  }
+  async recordUserArticleReading(req, res, next) {
+    try {
+      const { user_id, article_id } = req.body
+      const user = await UserRepository.validateUserId(user_id)
+      const article = await ArticleRepository.validateArticleId(article_id)
+      if (!user || !article) {
+        return res.status(400).json({ message: 'Invalid user id or article id' })
+      }
+      await UserRepository.createUserArticleRecord(user_id, article_id, new Date())
+      return res.status(200).json({ message: 'Successfully recorded user article reading' })
     } catch (error) {
       next(error)
     }
