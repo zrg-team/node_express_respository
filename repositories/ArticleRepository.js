@@ -25,5 +25,26 @@ class ArticleRepository extends BaseRepository {
       created_at
     }
   }
+  async getArticles(page = 1, limit = 10) {
+    const offset = (page - 1) * limit;
+    const articles = await this.model.findAndCountAll({
+      attributes: ['title', 'description', 'created_at'],
+      order: [['created_at', 'DESC']],
+      limit,
+      offset
+    });
+    articles.rows = articles.rows.map(article => {
+      return {
+        title: repositoryHelper.trimLongText(article.title),
+        description: repositoryHelper.trimLongText(article.description),
+        created_at: article.created_at
+      }
+    });
+    return {
+      totalItems: articles.count,
+      totalPages: Math.ceil(articles.count / limit),
+      data: articles.rows
+    };
+  }
 }
 module.exports = new ArticleRepository()

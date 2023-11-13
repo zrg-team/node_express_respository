@@ -1,6 +1,5 @@
 const status = require('http-status')
 const ApiError = require('../utils/api-error')
-
 module.exports = (res = {}) => {
   const isDebug = process.env.DEBUG === 'true'
   return {
@@ -24,6 +23,16 @@ module.exports = (res = {}) => {
       return res
         .status(code)
         .json({ success: false, msg })
+    },
+    paginateResponse: (articles, total, page, limit) => {
+      const totalPages = Math.ceil(total / limit);
+      return {
+        success: true,
+        data: articles,
+        totalItems: total,
+        totalPages: totalPages,
+        currentPage: page
+      }
     }
   }
 }
