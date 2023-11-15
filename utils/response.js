@@ -4,10 +4,11 @@ const util = require('./util')
 module.exports = (res = {}) => {
   const isDebug = process.env.DEBUG === 'true'
   return {
-    success: (data) => {
+    success: (data, totalItems, totalPages) => {
+      const pagination = totalPages > 1 ? { totalItems, totalPages } : undefined;
       return res
         .status(200)
-        .json({ success: true, ...data })
+        .json({ success: true, data, pagination })
     },
     error: (err) => {
       if (err instanceof ApiError && err.status === status.BAD_REQUEST) {
