@@ -29,6 +29,20 @@ module.exports = (res = {}, pagination = {}) => {
       return res
         .status(code)
         .json({ success: false, msg })
+    },
+    sendArticleList: (articles, totalItems, totalPages) => {
+      return res
+        .status(200)
+        .json({
+          success: true,
+          articles: articles.map(article => ({
+            title: article.title.length > 50 ? `${article.title.substring(0, 50)}...` : article.title,
+            description: article.description.length > 100 ? `${article.description.substring(0, 100)}...` : article.description,
+            created_at: article.created_at
+          })),
+          total_items: totalItems,
+          total_pages: totalPages
+        })
     }
   }
 }
