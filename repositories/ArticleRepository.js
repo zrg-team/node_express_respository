@@ -4,7 +4,17 @@ class ArticleRepository extends BaseRepository {
   constructor({ Article }) {
     super(Article);
   }
-  async getArticles(page, limit) {
+  async findById(id) {
+    if (isNaN(id)) {
+      throw new Error('Wrong format.');
+    }
+    const article = await this.findOne({ where: { id } });
+    if (!article) {
+      throw new Error('This article is not found');
+    }
+    return article;
+  }
+  async getArticles(page, limit = 10) {
     if (typeof page !== 'number' || page < 1) {
       throw new Error('Page must be greater than 0.');
     }

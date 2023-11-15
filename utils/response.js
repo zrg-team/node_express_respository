@@ -8,7 +8,7 @@ module.exports = (res = {}, pagination = {}) => {
         .status(200)
         .json({ 
           success: true, 
-          data,
+          ...data,
           total_pages: pagination.total_pages || null,
           limit: pagination.limit || null,
           current_page: pagination.current_page || null

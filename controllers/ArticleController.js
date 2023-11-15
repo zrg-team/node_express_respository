@@ -5,6 +5,9 @@ const util = require('../utils/util')
 const ApiError = require('../utils/api-error')
 const { validateId } = require('../utils')
 const ArticleController = () => {
+  const getArticles = async (req, res, next) => {
+    // ... existing code ...
+  }
   const getArticlesList = async (req, res, next) => {
     try {
       let page = parseInt(req.query.page)
@@ -40,12 +43,31 @@ const ArticleController = () => {
       next(err)
     }
   }
-  // Existing code...
-  const getArticles = async (req, res, next) => {
-    // ...
-  }
   const getArticleDetails = async (req, res, next) => {
-    // ...
+    try {
+      const { id } = req.params
+      // Validate the "id"
+      if (!validateId(id)) {
+        return next(new ApiError('Wrong format.', 400))
+      }
+      // Fetch the article from the database
+      const article = await articleRepository.findById(id)
+      // If the article does not exist, return an error
+      if (!article) {
+        return next(new ApiError('This article is not found.', 404))
+      }
+      // Prepare the data to be sent back to the user
+      const data = {
+        id: article.id,
+        title: article.title,
+        description: article.description,
+        created_at: article.created_at
+      }
+      // Return the article details in the response object
+      return response(res).success(data)
+    } catch (err) {
+      return next(err)
+    }
   }
   return {
     getArticles,

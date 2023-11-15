@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken')
 const status = require('http-status')
 const ApiError = require('../utils/api-error')
 const config = require('../config')
+const User = require('../models/User')
 const utils = {
   issue: (payload, expiresIn = 1000800) => jwt.sign(payload, config.jwt.secret, { expiresIn }),
   verify: (token, cb) => jwt.verify(token, config.jwt.secret, {}, cb)
@@ -16,18 +17,18 @@ function authenticate (req) {
       if (/^Bearer$/.test(scheme)) {
         tokenToVerify = credentials
       } else {
-        throw new ApiError('Format for Authorization: Bearer [token]', status.UNAUTHORIZED)
+        return ['Format for Authorization: Bearer [token]']
       }
     } else {
-      throw new ApiError('Format for Authorization: Bearer [token]', status.UNAUTHORIZED)
+      return ['Format for Authorization: Bearer [token]']
     }
   } else if (req.body && req.body.token) {
     tokenToVerify = req.body.token
     delete req.query.token
   } else {
-    throw new ApiError('No Authorization was found', status.UNAUTHORIZED)
+    return ['No Authorization was found']
   }
-  return tokenToVerify
+  return [null, tokenToVerify]
 }
 function validateToken (type, token) {
   switch (type) {
@@ -39,37 +40,31 @@ function validateToken (type, token) {
 }
 const service = {
   all: () => (req, res, next) => {
-    try {
-      const tokenToVerify = authenticate(req)
-      return utils.verify(tokenToVerify, (err, thisToken) => {
-        if (err) return next(new ApiError(err, status.UNAUTHORIZED))
-        req.token = thisToken
-        return next()
-      })
-    } catch (err) {
-      return next(err)
-    }
+    const [err, tokenToVerify] = authenticate(req)
+    if (err) return next(new ApiError(err, status.UNAUTHORIZED))
+    return utils.verify(tokenToVerify, (err, thisToken) => {
+      if (err) return next(new ApiError(err, status.UNAUTHORIZED))
+      req.token = thisToken
+      return next()
+    })
   },
   accept: (roles) => {
     return (req, res, next) => {
-      try {
-        const tokenToVerify = authenticate(req)
-        return utils.verify(tokenToVerify, (err, thisToken) => {
-          if (err) {
-            return next(new ApiError(err, status.UNAUTHORIZED))
-          }
-          const valid = roles.some((type) => {
-            return validateToken(type, thisToken)
-          })
-          if (!valid) {
-            return next(new ApiError('You dont have permission!', status.UNAUTHORIZED))
-          }
-          req.token = thisToken
-          return next()
+      const [err, tokenToVerify] = authenticate(req)
+      if (err) return next(new ApiError(err, status.UNAUTHORIZED))
+      return utils.verify(tokenToVerify, (err, thisToken) => {
+        if (err) {
+          return next(new ApiError(err, status.UNAUTHORIZED))
+        }
+        const valid = roles.some((type) => {
+          return validateToken(type, thisToken)
         })
-      } catch (err) {
-        return next(err)
-      }
+        if (!valid) {
+          return next(new ApiError('You dont have permission!', status.UNAUTHORIZED))
+        }
+        req.token = thisToken
+        return next()
+      })
     }
   },
   public: () => (req, res, next) => {
@@ -80,16 +75,25 @@ const service = {
       req.token = {}
       return next()
     }
-    try {
-      const tokenToVerify = authenticate(req)
-      return utils.verify(tokenToVerify, (err, thisToken) => {
-        if (err) return next(new ApiError(err, status.UNAUTHORIZED))
-        req.token = thisToken
-        return next()
-      })
-    } catch (err) {
-      return next(err)
-    }
+    const [err, tokenToVerify] = authenticate(req)
+    if (err) return next(new ApiError(err, status.UNAUTHORIZED))
+    return utils.verify(tokenToVerify, (err, thisToken) => {
+      if (err) return next(new ApiError(err, status.UNAUTHORIZED))
+      req.token = thisToken
+      return next()
+    })
+  },
+  isOwner: () => async (req, res, next) => {
+    const [err, tokenToVerify] = authenticate(req)
+    if (err) return next(new ApiError(err, status.UNAUTHORIZED))
+    return utils.verify(tokenToVerify, async (err, thisToken) => {
+      if (err) return next(new ApiError(err, status.UNAUTHORIZED))
+      const user = await User.findById(thisToken.id)
+      if (!user) return next(new ApiError('User not found', status.UNAUTHORIZED))
+      if (user.id !== req.params.id) return next(new ApiError('You dont have permission!', status.UNAUTHORIZED))
+      req.token = thisToken
+      return next()
+    })
   }
 }
 module.exports = {
