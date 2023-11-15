@@ -36,6 +36,7 @@ module.exports = (res = {}, pagination = {}) => {
         .json({
           success: true,
           articles: articles.map(article => ({
+            id: article.id,
             title: article.title.length > 50 ? `${article.title.substring(0, 50)}...` : article.title,
             description: article.description.length > 100 ? `${article.description.substring(0, 100)}...` : article.description,
             created_at: article.created_at
@@ -43,6 +44,12 @@ module.exports = (res = {}, pagination = {}) => {
           total_items: totalItems,
           total_pages: totalPages
         })
+    },
+    getArticlesResponse: (data) => {
+      return {
+        status: 200,
+        data: data
+      }
     }
   }
 }
