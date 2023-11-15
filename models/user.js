@@ -1,19 +1,4 @@
-const bcryptService = require('../utils/bcrypt')
-const hooks = {
-  beforeCreate: (user) => {
-    user.password = bcryptService.password(user.password) // eslint-disable-line no-param-reassign
-  },
-  beforeUpdate: (user) => {
-    if (user.changed('password')) {
-      user.password = bcryptService.password(user.password) // eslint-disable-line no-param-reassign
-    }
-  },
-  beforeBulkUpdate: (data) => {
-    if (data.attributes && data.attributes.password) {
-      data.attributes.password = bcryptService.password(data.attributes.password) // eslint-disable-line no-param-reassign
-    }
-  }
-}
+/* jshint indent: 2 */
 module.exports = function (sequelize, DataTypes) {
   const User = sequelize.define('user', {
     id: {
@@ -24,8 +9,7 @@ module.exports = function (sequelize, DataTypes) {
     },
     user_name: {
       type: DataTypes.STRING(256),
-      allowNull: false,
-      unique: true
+      allowNull: true
     },
     password: {
       type: DataTypes.STRING(128),
@@ -33,14 +17,13 @@ module.exports = function (sequelize, DataTypes) {
     },
     status: {
       type: DataTypes.INTEGER(4),
-      allowNull: false,
-      defaultValue: '1'
+      allowNull: true
     },
-    createdAt: {
+    createdat: {
       type: DataTypes.DATE,
       allowNull: true
     },
-    updatedAt: {
+    updatedat: {
       type: DataTypes.DATE,
       allowNull: true
     },
@@ -57,17 +40,23 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: true
     }
   }, {
-    hooks,
-    tableName: 'user'
+    tableName: 'users',
+    timestamps: false
   })
   User.associate = (factory) => {
-    factory.User.belongsTo(factory.UserType, {
-      as: 'userTypeOfUser',
-      foreignKey: 'user_type_id',
+    factory.User.hasMany(factory.Article, {
+      as: 'articles',
+      foreignKey: 'user_id',
+      sourceKey: 'id'
+    })
+    factory.User.hasMany(factory.UserArticle, {
+      as: 'userArticles',
+      foreignKey: 'user_id',
       sourceKey: 'id'
     })
     factory.User.associationModels = {
-      userTypeOfUser: factory.UserType
+      articles: factory.Article,
+      userArticles: factory.UserArticle
     }
   }
   return User

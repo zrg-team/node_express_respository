@@ -32,14 +32,16 @@ module.exports = function (sequelize, DataTypes) {
     timestamps: false
   })
   Article.associate = (factory) => {
-    factory.Article.belongsTo(factory.User, {
-      as: 'userOfArticle',
+    Article.belongsTo(factory.User, {
+      as: 'user',
       foreignKey: 'user_id',
       sourceKey: 'id'
     })
-    factory.Article.associationModels = {
-      userOfArticle: factory.User
-    }
+    Article.hasMany(factory.UserArticle, {
+      as: 'userArticles',
+      foreignKey: 'article_id',
+      sourceKey: 'id'
+    })
   }
   return Article
 }
