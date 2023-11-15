@@ -1,3 +1,4 @@
+// PATH: /controllers/ArticleController.js
 const userRepository = require('../repositories/UserRepository')
 const articleRepository = require('../repositories/ArticleRepository')
 const ApiError = require('../utils/api-error')
@@ -7,22 +8,18 @@ const ArticleController = () => {
   // Other functions...
   const readArticle = async (req, res, next) => {
     try {
-      const { user_id, article_id } = req.body
-      // Check if user exists
-      const user = await userRepository.findOne({ where: { id: user_id } })
-      if (!user) {
-        return next(new ApiError([{ message: 'User not found.' }], 404))
+      const { id } = req.params
+      // Validate id
+      if (!id || isNaN(id)) {
+        return next(new ApiError([{ message: 'Wrong format.' }], 400))
       }
       // Check if article exists
-      const article = await articleRepository.findOne({ where: { id: article_id } })
+      const article = await articleRepository.getArticleById(id)
       if (!article) {
-        return next(new ApiError([{ message: 'Article not found.' }], 404))
+        return next(new ApiError([{ message: 'This article is not found' }], 404))
       }
-      // Create new record in user_articles table
-      const read_at = new Date()
-      await db.user_articles.create({ user_id, article_id, read_at })
       // Return success message
-      return response(res).success({ user_id, article_id, read_at })
+      return response(res).success({ article })
     } catch (err) {
       return next(err)
     }

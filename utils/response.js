@@ -26,16 +26,25 @@ module.exports = (res = {}) => {
         .status(code)
         .json({ success: false, msg })
     },
-    sendReadArticleResponse: (user_id, article_id, read_at) => {
+    sendReadArticleResponse: (article) => {
       const data = {
-        message: 'Article read successfully',
-        user_id: user_id,
-        article_id: article_id,
-        read_at: util.formatDate(read_at)
+        status: 200,
+        article: {
+          id: article.id,
+          title: article.title,
+          content: article.content,
+          author_id: article.author_id,
+          created_at: util.formatDate(article.created_at)
+        }
       }
       return res
         .status(200)
-        .json({ success: true, ...data })
+        .json(data)
+    },
+    sendArticleResponse: (article) => {
+      return res
+        .status(200)
+        .json({ success: true, data: article })
     }
   }
 }
