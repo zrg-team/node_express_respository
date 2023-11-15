@@ -1,13 +1,18 @@
 const status = require('http-status')
 const ApiError = require('../utils/api-error')
-
-module.exports = (res = {}) => {
+module.exports = (res = {}, pagination = {}) => {
   const isDebug = process.env.DEBUG === 'true'
   return {
     success: (data) => {
       return res
         .status(200)
-        .json({ success: true, ...data })
+        .json({ 
+          success: true, 
+          data,
+          total_pages: pagination.total_pages || null,
+          limit: pagination.limit || null,
+          current_page: pagination.current_page || null
+        })
     },
     error: (err) => {
       if (err instanceof ApiError && err.status === status.BAD_REQUEST) {

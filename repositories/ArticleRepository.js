@@ -4,11 +4,16 @@ class ArticleRepository extends BaseRepository {
   constructor({ Article }) {
     super(Article);
   }
-  async getArticles(page) {
-    const limit = 10;
+  async getArticles(page, limit) {
+    if (typeof page !== 'number' || page < 1) {
+      throw new Error('Page must be greater than 0.');
+    }
+    if (typeof limit !== 'number') {
+      throw new Error('Wrong format.');
+    }
     const offset = (page - 1) * limit;
     const articles = await this.findAll({
-      attributes: ['title', 'description', 'created_at'],
+      attributes: ['id', 'title', 'description', 'created_at'],
       limit,
       offset,
       order: [order('created_at', 'DESC')],
@@ -24,7 +29,7 @@ class ArticleRepository extends BaseRepository {
     });
     const total = await this.count();
     const totalPages = Math.ceil(total / limit);
-    return { articles, totalPages };
+    return { status: 200, articles, totalPages, limit, page };
   }
 }
 module.exports = ArticleRepository;

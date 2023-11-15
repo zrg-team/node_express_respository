@@ -1,10 +1,14 @@
 const status = require('http-status')
 const ApiError = require('./api-error')
-
 const SQL_ERRORS = {
   ER_DATA_TOO_LONG: 'ER_DATA_TOO_LONG'
 }
-
+const PARAMETER_ERRORS = {
+  INVALID_PAGE: 'Invalid page parameter',
+  INVALID_LIMIT: 'Invalid limit parameter',
+  PAGE_LESS_THAN_ONE: 'Page must be greater than 0.',
+  WRONG_FORMAT: 'Wrong format.'
+}
 module.exports = {
   parseErrors: (arr) => {
     const errors = []
@@ -27,6 +31,19 @@ module.exports = {
               field: new RegExp("(?<=column ')(.*?)(?=s*')").exec(inputError.sqlMessage)[0],
               message: inputError.sqlMessage
             }
+        }
+      }
+      throw new Error('CAN_NOT_HANDLE')
+    } catch (err) {
+      throw inputError
+    }
+  },
+  parseParameterErrors: (inputError) => {
+    try {
+      if (PARAMETER_ERRORS[inputError.code]) {
+        return {
+          field: inputError.field,
+          message: PARAMETER_ERRORS[inputError.code]
         }
       }
       throw new Error('CAN_NOT_HANDLE')
