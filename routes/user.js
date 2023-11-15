@@ -1,3 +1,4 @@
+// PATH: /routes/user.js
 const auth = require('.././libs/auth')
 const file = require('.././libs/files')
 const MODULE_NAME = 'user'
@@ -62,6 +63,13 @@ const routes = {
   },
   'GET /api/articles': {
     path: 'ArticleController.getArticlesList',
+    middlewares: [
+      auth.service.all(),
+      file.all.none()
+    ]
+  },
+  'POST /user/:user_id/article/:article_id/read': {
+    path: 'ArticleController.readArticle',
     middlewares: [
       auth.service.all(),
       file.all.none()

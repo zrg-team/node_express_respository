@@ -1,8 +1,19 @@
 const BaseRepository = require('./BaseRepository');
 const { order } = require('../utils/sequelizeUtils');
+const ApiError = require('../utils/api-error');
 class ArticleRepository extends BaseRepository {
-  constructor({ Article }) {
+  constructor({ Article, UserArticle }) {
     super(Article);
+    this.UserArticle = UserArticle;
+  }
+  async createUserArticle(user_id, article_id) {
+    try {
+      const read_at = new Date();
+      const userArticle = await this.UserArticle.create({ user_id, article_id, read_at });
+      return userArticle;
+    } catch (error) {
+      throw new ApiError(error);
+    }
   }
   async findById(id) {
     if (isNaN(id)) {
