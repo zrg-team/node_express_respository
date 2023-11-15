@@ -1,9 +1,32 @@
 // PATH: /controllers/ArticleController.js
-const ApiError = require('../utils/api-error')
-const response = require('../utils/response')
 const articleRepository = require('../repositories/ArticleRepository')
+const response = require('../utils/response')
+const util = require('../utils/util')
+const ApiError = require('../utils/api-error')
 const { validateId } = require('../utils')
 const ArticleController = () => {
+  const getArticles = async (req, res, next) => {
+    try {
+      let page = req.query.page
+      page = util.validatePage(page) ? page : 1
+      const articles = await articleRepository.getArticles(page, 10, { order: { created_at: 'DESC' } })
+      const formattedArticles = articles.map(article => {
+        return {
+          title: util.trimText(article.title, 2),
+          description: util.trimText(article.description, 2),
+          created_at: article.created_at
+        }
+      })
+      const totalPages = util.calculateTotalPages(articles.length, 10)
+      return response(res)
+        .success({
+          articles: formattedArticles,
+          totalPages: totalPages
+        })
+    } catch (err) {
+      next(err)
+    }
+  }
   const getArticleDetails = async (req, res, next) => {
     try {
       const { id } = req.params
@@ -30,6 +53,7 @@ const ArticleController = () => {
     }
   }
   return {
+    getArticles,
     getArticleDetails
   }
 }
