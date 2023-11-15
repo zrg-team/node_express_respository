@@ -2,6 +2,7 @@
 const auth = require('.././libs/auth')
 const file = require('.././libs/files')
 const ArticleController = require('../controllers/ArticleController')
+const validateArticleList = require('../middlewares/validateArticleList');
 const MODULE_NAME = 'user'
 const routes = {
   'POST /': {
@@ -60,6 +61,14 @@ const routes = {
     middlewares: [
       auth.service.all(),
       file.all.none()
+    ]
+  },
+  'GET /api/articles': {
+    path: 'ArticleController.getArticlesList',
+    middlewares: [
+      auth.service.all(),
+      file.all.none(),
+      validateArticleList
     ]
   }
 }

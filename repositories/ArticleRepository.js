@@ -8,6 +8,28 @@ class ArticleRepository extends BaseRepository {
     this.DEFAULT_SORT = [['id', 'DESC']]
     this.DEFAULT_PAGE = 0
   }
+  async getArticles(page = this.DEFAULT_PAGE, limit = this.DEFAULT_LIMIT) {
+    if (typeof page !== 'number' || typeof limit !== 'number') {
+      throw new Error('Wrong format.')
+    }
+    if (page < 1) {
+      throw new Error('Page must be greater than 0.')
+    }
+    try {
+      const offset = (page - 1) * limit
+      const articles = await this.model.findAll({
+        attributes: ['id', 'title', 'content', 'author_id', 'created_at'],
+        order: [['created_at', 'DESC']],
+        limit,
+        offset
+      })
+      const count = await this.model.count()
+      const totalPages = Math.ceil(count / limit)
+      return { status: 200, articles, total_pages: totalPages, limit, page }
+    } catch (error) {
+      sequelizeUtils.handleDatabaseError(error)
+    }
+  }
   async checkArticleExists(article_id) {
     try {
       const article = await this.model.findOne({ where: { id: article_id } })
