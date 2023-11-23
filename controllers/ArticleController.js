@@ -14,14 +14,17 @@ const ArticleController = () => {
       if (!validateUserIdAndArticleId(user_id, article_id)) {
         return next(new ApiError('Invalid user_id or article_id', 400))
       }
-      const userExists = await UserRepository.checkUserExists(user_id)
-      const articleExists = await ArticleRepository.checkArticleExists(article_id)
-      if (!userExists || !articleExists) {
-        return next(new ApiError('User or Article does not exist', 404))
+      const user = await UserRepository.findUserById(user_id)
+      if (!user) {
+        return next(new ApiError('User not found', 404))
       }
-      const recordExists = await UserArticlesRepository.checkUserArticleExists(user_id, article_id)
-      if (recordExists) {
-        await UserArticlesRepository.updateUserArticle(user_id, article_id, new Date())
+      const article = await ArticleRepository.findArticleById(article_id)
+      if (!article) {
+        return next(new ApiError('Article not found', 404))
+      }
+      const userArticle = await UserArticlesRepository.findUserArticle(user_id, article_id)
+      if (userArticle) {
+        await UserArticlesRepository.updateUserArticle(userArticle, new Date())
       } else {
         await UserArticlesRepository.createUserArticle(user_id, article_id, new Date())
       }
