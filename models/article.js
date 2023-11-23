@@ -30,11 +30,11 @@ module.exports = function (sequelize, DataTypes) {
     tableName: 'articles'
   })
   Article.associate = (models) => {
-    Article.belongsTo(models.users, {
+    Article.belongsTo(models.User, {
       foreignKey: 'user_id',
       as: 'user'
     })
-    Article.hasMany(models.user_articles, {
+    Article.hasMany(models.UserArticles, {
       foreignKey: 'article_id',
       as: 'userArticles'
     })
