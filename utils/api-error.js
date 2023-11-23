@@ -1,5 +1,4 @@
 const httpStatus = require('http-status')
-
 class ExtendableError extends Error {
   constructor (message, status) {
     super(message)
@@ -9,7 +8,6 @@ class ExtendableError extends Error {
     Error.captureStackTrace(this, this.constructor.name)
   }
 }
-
 class ApiError extends ExtendableError {
   /**
      * Creates an API error.
@@ -20,5 +18,12 @@ class ApiError extends ExtendableError {
     super(message, status)
   }
 }
-
-module.exports = ApiError
+class ArticleNotFoundError extends ApiError {
+  constructor (message = 'Article not found', status = httpStatus.NOT_FOUND) {
+    super(message, status)
+  }
+}
+module.exports = {
+  ApiError,
+  ArticleNotFoundError
+}

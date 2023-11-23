@@ -1,5 +1,6 @@
 const BaseRepository = require('./BaseRepository')
 const db = require('../libs/db.js')
+const sequelizeUtils = require('../utils/sequelizeUtils.js')
 class ArticleRepository extends BaseRepository {
   constructor () {
     super('articles')
@@ -11,9 +12,9 @@ class ArticleRepository extends BaseRepository {
     if (typeof id !== 'number' || id <= 0) {
       throw new Error('ID must be a positive integer')
     }
-    const article = await this.model.findById(id)
+    const article = await sequelizeUtils.findOne(this.model, { where: { id: id } })
     if (!article) {
-      throw new Error('Article does not exist')
+      throw new Error('Article not found')
     }
     return {
       title: article.title,
