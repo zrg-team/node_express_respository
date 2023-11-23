@@ -1,5 +1,5 @@
 module.exports = function (sequelize, DataTypes) {
-  const Article = sequelize.define('article', {
+  const Article = sequelize.define('articles', {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -30,11 +30,11 @@ module.exports = function (sequelize, DataTypes) {
     tableName: 'articles'
   })
   Article.associate = (models) => {
-    Article.belongsTo(models.User, {
+    Article.belongsTo(models.users, {
       foreignKey: 'user_id',
       as: 'user'
     })
-    Article.hasMany(models.UserArticle, {
+    Article.hasMany(models.user_articles, {
       foreignKey: 'article_id',
       as: 'userArticles'
     })
