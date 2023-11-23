@@ -38,7 +38,7 @@ module.exports = {
     if (!Number.isInteger(page) || page <= 0) {
       throw new Error('Page number must be a positive integer');
     }
-    return true;
+    return page;
   },
   calculateOffset: (page, articlesPerPage) => {
     return (page - 1) * articlesPerPage;
@@ -51,10 +51,10 @@ module.exports = {
   getArticleList: async (page) => {
     this.validatePageNumber(page);
     const limit = 10;
-    const offset = (page - 1) * limit;
+    const offset = this.calculateOffset(page, limit);
     const articles = await sequelizeUtils.query('articles', { order: [['created_at', 'DESC']], offset, limit });
     const totalArticles = await sequelizeUtils.count('articles');
-    const totalPages = Math.ceil(totalArticles / limit);
+    const totalPages = this.calculateTotalPages(totalArticles, limit);
     return { articles, totalArticles, totalPages };
   }
 }
