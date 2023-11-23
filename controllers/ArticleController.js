@@ -15,12 +15,9 @@ const ArticleController = () => {
         return next(new ApiError('Invalid user_id or article_id', 400))
       }
       const user = await UserRepository.findUserById(user_id)
-      if (!user) {
-        return next(new ApiError('User not found', 404))
-      }
       const article = await ArticleRepository.findArticleById(article_id)
-      if (!article) {
-        return next(new ApiError('Article not found', 404))
+      if (!user || !article) {
+        return next(new ApiError('User or Article does not exist', 404))
       }
       const userArticle = await UserArticlesRepository.findUserArticle(user_id, article_id)
       if (userArticle) {
