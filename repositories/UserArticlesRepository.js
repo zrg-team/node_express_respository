@@ -1,10 +1,9 @@
 const { UserArticle } = require('../models');
 const { User } = require('../models');
 const { Article } = require('../models');
+const sequelizeUtils = require('../utils/sequelizeUtils');
 class UserArticlesRepository {
-  // ...
   async findUserArticle(user_id, article_id) {
-    // Validate user_id and article_id
     if (user_id <= 0 || article_id <= 0) {
       throw new Error('User ID and Article ID must be positive integers');
     }
@@ -40,6 +39,15 @@ class UserArticlesRepository {
       article_id: article_id,
       read_at: read_at
     });
+  }
+  async markAsRead(user_id, article_id) {
+    const userArticle = await this.findUserArticle(user_id, article_id);
+    const read_at = sequelizeUtils.now();
+    if (userArticle) {
+      return await this.updateUserArticle(user_id, article_id, read_at);
+    } else {
+      return await this.createUserArticle(user_id, article_id, read_at);
+    }
   }
 }
 module.exports = new UserArticlesRepository();
