@@ -31,11 +31,22 @@ module.exports = {
     }
     return 'Article has been marked as read by the user';
   },
+  calculateTotalPages: (totalArticles, articlesPerPage) => {
+    return Math.ceil(totalArticles / articlesPerPage);
+  },
   validatePageNumber: (page) => {
     if (!Number.isInteger(page) || page <= 0) {
       throw new Error('Page number must be a positive integer');
     }
-    return page;
+    return true;
+  },
+  calculateOffset: (page, articlesPerPage) => {
+    return (page - 1) * articlesPerPage;
+  },
+  trimArticleFields: (article) => {
+    article.title = article.title.length > 100 ? article.title.substring(0, 100) + '...' : article.title;
+    article.description = article.description.length > 200 ? article.description.substring(0, 200) + '...' : article.description;
+    return article;
   },
   getArticleList: async (page) => {
     this.validatePageNumber(page);

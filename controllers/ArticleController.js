@@ -9,7 +9,7 @@ const ArticleController = () => {
     try {
       let { page } = req.query
       page = page ? parseInt(page) : 1
-      if (isNaN(page) || page < 1) {
+      if (!Number.isInteger(page) || page <= 0) {
         return next(new ApiError('Invalid page number', 400))
       }
       const articlesPerPage = 10;
@@ -34,9 +34,12 @@ const ArticleController = () => {
         return next(new ApiError('Invalid user_id or article_id', 400))
       }
       const user = await UserRepository.findUserById(user_id)
+      if (!user) {
+        return next(new ApiError('User not found', 404))
+      }
       const article = await ArticleRepository.findArticleById(article_id)
-      if (!user || !article) {
-        return next(new ApiError('User or Article does not exist', 404))
+      if (!article) {
+        return next(new ApiError('Article not found', 404))
       }
       const userArticle = await UserArticlesRepository.findUserArticle(user_id, article_id)
       if (userArticle) {
