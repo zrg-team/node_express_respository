@@ -1,5 +1,5 @@
 const BaseRepository = require('./BaseRepository')
-const { Article, UserArticle } = require('../models')
+const { Article, UserArticle, User } = require('../models')
 const { sequelize } = require('../libs/db')
 class ArticleRepository extends BaseRepository {
   constructor () {
@@ -34,6 +34,20 @@ class ArticleRepository extends BaseRepository {
         }, { transaction: t })
       }
     })
+  }
+  async getArticles(page = this.DEFAULT_PAGE) {
+    if (!Number.isInteger(page) || page <= 0) {
+      throw new Error('Invalid page number')
+    }
+    const offset = (page - 1) * this.DEFAULT_LIMIT;
+    const articles = await Article.findAll({
+      order: this.DEFAULT_SORT,
+      limit: this.DEFAULT_LIMIT,
+      offset: offset
+    });
+    const total = await Article.count();
+    const totalPages = Math.ceil(total / this.DEFAULT_LIMIT);
+    return { articles, total, totalPages };
   }
 }
 module.exports = new ArticleRepository()

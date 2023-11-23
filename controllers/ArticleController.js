@@ -1,12 +1,31 @@
 const ArticleRepository = require('../repositories/ArticleRepository')
 const UserArticlesRepository = require('../repositories/UserArticlesRepository')
 const response = require('../utils/response')
-const { validatePage, validateUserIdAndArticleId } = require('../utils/validate')
+const { validatePageNumber, validateUserIdAndArticleId } = require('../utils/util')
 const validateId = require('../utils/validateId')
 const ApiError = require('../utils/api-error')
-const { formatArticles } = require('../utils/articleHelper')
+const { formatArticleData } = require('../utils/articleHelper')
 const ArticleController = () => {
-  // ... other functions
+  const getArticles = async (req, res, next) => {
+    try {
+      const page = req.query.page
+      if (!validatePageNumber(page)) {
+        return response(res).error('Invalid page number', 400)
+      }
+      const offset = (page - 1) * 10
+      const { articles, total } = await ArticleRepository.getArticles(offset)
+      const formattedArticles = articles.map(article => formatArticleData(article))
+      const totalPages = Math.ceil(total / 10)
+      return response(res)
+        .success({
+          articles: formattedArticles,
+          total,
+          pages: totalPages
+        })
+    } catch (err) {
+      next(err)
+    }
+  }
   const markAsRead = async (req, res, next) => {
     try {
       const { user_id, article_id } = req.body
@@ -37,7 +56,6 @@ const ArticleController = () => {
   }
   return {
     getArticles,
-    getArticleDetails,
     markAsRead
   }
 }
