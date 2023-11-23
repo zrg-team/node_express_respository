@@ -4,7 +4,7 @@ const dbService = require('.././libs/db')
 const User = require('../models/user')
 const UserType = require('../models/user_type')
 const File = require('../models/file')
-
+const Article = require('../models/article')
 class RepositoryHelper {
   constructor (sequelize) {
     this.factory = {}
@@ -12,14 +12,13 @@ class RepositoryHelper {
     this.models = {
       User: 'User',
       UserType: 'UserType',
-      File: 'File'
+      File: 'File',
+      Article: 'Article'
     }
   }
-
   getRepositoryModel (repo) {
     return this.setupAssociations(repo)
   }
-
   getModel (name) {
     if (this.factory[name]) {
       return this.factory[name]
@@ -38,16 +37,18 @@ class RepositoryHelper {
         model = File(this.sequelize, Sequelize)
         this.factory.File = model
         break
+      case this.models.Article:
+        model = Article(this.sequelize, Sequelize)
+        this.factory.Article = model
+        break
     }
     return model
   }
-
   setupAssociations (repo) {
     switch (repo) {
       case 'user':
         this.factory.User = this.getModel('User')
         this.factory.UserType = this.getModel('UserType')
-
         this.factory.User.associate(this.factory)
         return this.factory.User
       case 'file':
@@ -55,8 +56,14 @@ class RepositoryHelper {
         this.factory.User = this.getModel('User')
         this.factory.File.associate(this.factory)
         return this.factory.File
+      case 'article':
+        this.factory.Article = this.getModel('Article')
+        this.factory.Article.associate(this.factory)
+        return this.factory.Article
     }
   }
+  calculateTotalPages(totalArticles, articlesPerPage) {
+    return Math.ceil(totalArticles / articlesPerPage);
+  }
 }
-
 module.exports = new RepositoryHelper(dbService.database)
