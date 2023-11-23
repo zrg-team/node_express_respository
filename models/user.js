@@ -1,78 +1,56 @@
-const bcryptService = require('../utils/bcrypt')
-
-const hooks = {
-  beforeCreate: (user) => {
-    user.password = bcryptService.password(user.password) // eslint-disable-line no-param-reassign
-  },
-  beforeUpdate: (user) => {
-    if (user.changed('password')) {
-      user.password = bcryptService.password(user.password) // eslint-disable-line no-param-reassign
-    }
-  },
-  beforeBulkUpdate: (data) => {
-    if (data.attributes && data.attributes.password) {
-      data.attributes.password = bcryptService.password(data.attributes.password) // eslint-disable-line no-param-reassign
-    }
-  }
-}
-
 module.exports = function (sequelize, DataTypes) {
-  const User = sequelize.define('user', {
+  const User = sequelize.define('users', {
     id: {
-      type: DataTypes.INTEGER(11),
+      type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
     user_name: {
-      type: DataTypes.STRING(256),
-      allowNull: false,
-      unique: true
+      type: DataTypes.STRING,
+      allowNull: false
     },
     password: {
-      type: DataTypes.STRING(128),
-      allowNull: true
+      type: DataTypes.STRING,
+      allowNull: false
     },
     status: {
-      type: DataTypes.INTEGER(4),
-      allowNull: false,
-      defaultValue: '1'
+      type: DataTypes.INTEGER,
+      allowNull: false
     },
-    createdAt: {
+    createdat: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: false
     },
-    updatedAt: {
+    updatedat: {
       type: DataTypes.DATE,
-      allowNull: true
-    },
-    user_type_id: {
-      type: DataTypes.INTEGER(11),
       allowNull: false
     },
     avatar: {
-      type: DataTypes.STRING(256),
+      type: DataTypes.STRING,
       allowNull: true
     },
     avatar_file_id: {
-      type: DataTypes.INTEGER(11),
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    name: {
+      type: DataTypes.STRING,
       allowNull: true
     }
   }, {
-    hooks,
-    tableName: 'user'
-  })
-  User.associate = (factory) => {
-    factory.User.belongsTo(factory.UserType, {
-      as: 'userTypeOfUser',
-      foreignKey: 'user_type_id',
-      sourceKey: 'id'
-    })
-
-    factory.User.associationModels = {
-      userTypeOfUser: factory.UserType
-    }
+    tableName: 'users',
+    timestamps: false
+  });
+  User.associate = (models) => {
+    User.hasMany(models.Article, {
+      foreignKey: 'user_id',
+      as: 'articles'
+    });
+    User.hasMany(models.UserArticle, {
+      foreignKey: 'user_id',
+      as: 'user_articles'
+    });
   }
-
-  return User
+  return User;
 }
