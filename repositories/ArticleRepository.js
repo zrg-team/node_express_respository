@@ -7,6 +7,20 @@ class ArticleRepository extends BaseRepository {
     this.DEFAULT_SORT = [['created_at', 'DESC']]
     this.DEFAULT_PAGE = 0
   }
+  async findById(id) {
+    if (typeof id !== 'number' || id <= 0) {
+      throw new Error('ID must be a positive integer')
+    }
+    const article = await this.model.findById(id)
+    if (!article) {
+      throw new Error('Article does not exist')
+    }
+    return {
+      title: article.title,
+      description: article.description,
+      created_at: article.created_at
+    }
+  }
   getArticles(page = this.DEFAULT_PAGE) {
     const offset = page * this.DEFAULT_LIMIT;
     return db.articles.findAndCountAll({
