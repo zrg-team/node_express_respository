@@ -1,5 +1,5 @@
 const logger = require('./logger')
-const ApiError = require('./api-error')
+const ApiError = require('./apiError')
 const status = require('http-status')
 const sequelizeUtils = require('./sequelizeUtils')
 const moment = require('moment')
@@ -30,5 +30,20 @@ module.exports = {
       await sequelizeUtils.update('user_articles', { userId, articleId }, { read_at: moment().format() });
     }
     return 'Article has been marked as read by the user';
+  },
+  validatePageNumber: (page) => {
+    if (!Number.isInteger(page) || page <= 0) {
+      throw new Error('Page number must be a positive integer');
+    }
+    return page;
+  },
+  getArticleList: async (page) => {
+    this.validatePageNumber(page);
+    const limit = 10;
+    const offset = (page - 1) * limit;
+    const articles = await sequelizeUtils.query('articles', { order: [['created_at', 'DESC']], offset, limit });
+    const totalArticles = await sequelizeUtils.count('articles');
+    const totalPages = Math.ceil(totalArticles / limit);
+    return { articles, totalArticles, totalPages };
   }
 }

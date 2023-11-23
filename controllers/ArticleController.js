@@ -6,7 +6,26 @@ const { validateUserIdAndArticleId } = require('../utils/util')
 const ApiError = require('../utils/api-error')
 const ArticleController = () => {
   const getArticles = async (req, res, next) => {
-    // ... existing code ...
+    try {
+      let { page } = req.query
+      page = page ? parseInt(page) : 1
+      if (isNaN(page) || page < 1) {
+        return next(new ApiError('Invalid page number', 400))
+      }
+      const articlesPerPage = 10;
+      const offset = (page - 1) * articlesPerPage;
+      const articlesData = await ArticleRepository.getArticles(offset, articlesPerPage)
+      const totalArticles = await ArticleRepository.getTotalArticles();
+      const totalPages = Math.ceil(totalArticles / articlesPerPage);
+      const formattedArticles = articlesData.map(article => {
+        article.title = article.title.length > 100 ? article.title.substring(0, 100) + '...' : article.title;
+        article.description = article.description.length > 200 ? article.description.substring(0, 200) + '...' : article.description;
+        return article;
+      });
+      return response(res).success({ articles: formattedArticles, totalArticles, totalPages })
+    } catch (err) {
+      return next(err)
+    }
   }
   const markAsRead = async (req, res, next) => {
     try {
