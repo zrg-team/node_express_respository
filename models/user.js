@@ -1,5 +1,4 @@
 const bcryptService = require('../utils/bcrypt')
-
 const hooks = {
   beforeCreate: (user) => {
     user.password = bcryptService.password(user.password) // eslint-disable-line no-param-reassign
@@ -15,9 +14,8 @@ const hooks = {
     }
   }
 }
-
 module.exports = function (sequelize, DataTypes) {
-  const User = sequelize.define('user', {
+  const User = sequelize.define('users', {
     id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
@@ -46,10 +44,6 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.DATE,
       allowNull: true
     },
-    user_type_id: {
-      type: DataTypes.INTEGER(11),
-      allowNull: false
-    },
     avatar: {
       type: DataTypes.STRING(256),
       allowNull: true
@@ -57,22 +51,20 @@ module.exports = function (sequelize, DataTypes) {
     avatar_file_id: {
       type: DataTypes.INTEGER(11),
       allowNull: true
+    },
+    name: {
+      type: DataTypes.STRING(256),
+      allowNull: true
     }
   }, {
     hooks,
-    tableName: 'user'
+    tableName: 'users'
   })
-  User.associate = (factory) => {
-    factory.User.belongsTo(factory.UserType, {
-      as: 'userTypeOfUser',
-      foreignKey: 'user_type_id',
-      sourceKey: 'id'
+  User.associate = (models) => {
+    User.hasMany(models.Article, {
+      foreignKey: 'user_id',
+      as: 'articles'
     })
-
-    factory.User.associationModels = {
-      userTypeOfUser: factory.UserType
-    }
   }
-
   return User
 }
