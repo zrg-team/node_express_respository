@@ -53,6 +53,7 @@ module.exports = {
     const limit = 10;
     const offset = this.calculateOffset(page, limit);
     const articles = await sequelizeUtils.query('articles', { order: [['created_at', 'DESC']], offset, limit });
+    articles.forEach(article => this.trimArticleFields(article));
     const totalArticles = await sequelizeUtils.count('articles');
     const totalPages = this.calculateTotalPages(totalArticles, limit);
     return { articles, totalArticles, totalPages };

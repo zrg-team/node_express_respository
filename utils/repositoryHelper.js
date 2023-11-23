@@ -62,8 +62,8 @@ class RepositoryHelper {
         return this.factory.Article
     }
   }
-  calculateTotalPages(totalArticles, articlesPerPage) {
-    return Math.ceil(totalArticles / articlesPerPage);
+  calculateTotalPages(total, limit) {
+    return Math.ceil(total / limit);
   }
 }
 module.exports = new RepositoryHelper(dbService.database)

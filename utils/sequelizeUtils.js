@@ -44,6 +44,10 @@ const markArticleAsRead = async (userId, articleId, userArticleModel, userModel,
   }
   return 'Article has been marked as read by the user';
 }
+const calculateOffset = (page, limit) => {
+  if (page < 1) page = 1;
+  return (page - 1) * limit;
+}
 module.exports = {
   sequelizeOP,
   sequelizeFunctions,
@@ -51,5 +55,6 @@ module.exports = {
   checkRecordExists,
   createRecord,
   updateRecord,
-  markArticleAsRead
+  markArticleAsRead,
+  calculateOffset
 }

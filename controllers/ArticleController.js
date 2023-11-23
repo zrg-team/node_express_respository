@@ -2,27 +2,22 @@ const ArticleRepository = require('../repositories/ArticleRepository')
 const UserRepository = require('../repositories/UserRepository')
 const UserArticlesRepository = require('../repositories/UserArticlesRepository')
 const response = require('../utils/response')
-const { validateUserIdAndArticleId } = require('../utils/util')
+const { validatePageNumber, validateUserIdAndArticleId } = require('../utils/util')
 const ApiError = require('../utils/api-error')
+const { formatArticleData } = require('../utils/articleHelper')
 const ArticleController = () => {
   const getArticles = async (req, res, next) => {
     try {
       let { page } = req.query
-      page = page ? parseInt(page) : 1
-      if (!Number.isInteger(page) || page <= 0) {
+      if (!validatePageNumber(page)) {
         return next(new ApiError('Invalid page number', 400))
       }
       const articlesPerPage = 10;
       const offset = (page - 1) * articlesPerPage;
-      const articlesData = await ArticleRepository.getArticles(offset, articlesPerPage)
-      const totalArticles = await ArticleRepository.getTotalArticles();
-      const totalPages = Math.ceil(totalArticles / articlesPerPage);
-      const formattedArticles = articlesData.map(article => {
-        article.title = article.title.length > 100 ? article.title.substring(0, 100) + '...' : article.title;
-        article.description = article.description.length > 200 ? article.description.substring(0, 200) + '...' : article.description;
-        return article;
-      });
-      return response(res).success({ articles: formattedArticles, totalArticles, totalPages })
+      const { articles, total } = await ArticleRepository.getArticles(offset, articlesPerPage)
+      const formattedArticles = formatArticleData(articles);
+      const totalPages = Math.ceil(total / articlesPerPage);
+      return response(res).success({ articles: formattedArticles, total, totalPages })
     } catch (err) {
       return next(err)
     }
