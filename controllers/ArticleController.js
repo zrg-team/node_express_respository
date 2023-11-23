@@ -1,47 +1,12 @@
 const ArticleRepository = require('../repositories/ArticleRepository')
+const UserArticlesRepository = require('../repositories/UserArticlesRepository')
 const response = require('../utils/response')
 const { validatePage, validateUserIdAndArticleId } = require('../utils/validate')
 const validateId = require('../utils/validateId')
 const ApiError = require('../utils/api-error')
 const { formatArticles } = require('../utils/articleHelper')
 const ArticleController = () => {
-  const getArticles = async (req, res, next) => {
-    try {
-      const page = validatePage(req.query.page)
-      const { articles, total } = await ArticleRepository.getArticles(page)
-      const formattedArticles = formatArticles(articles)
-      const totalPages = Math.ceil(total / 10)
-      return response(res)
-        .success({
-          articles: formattedArticles,
-          total,
-          pages: totalPages
-        })
-    } catch (err) {
-      next(err)
-    }
-  }
-  const getArticleDetails = async (req, res, next) => {
-    try {
-      const { id } = req.params
-      // Validate id
-      if (!validateId(id)) {
-        return next(new ApiError('Invalid ID', 400))
-      }
-      // Fetch article details
-      const article = await ArticleRepository.getArticleById(id)
-      // Check if article exists
-      if (!article) {
-        return next(new ApiError('Article not found', 404))
-      }
-      // Extract required fields
-      const { title, description, created_at } = article
-      // Return article details
-      return response(res).success({ title, description, created_at })
-    } catch (err) {
-      return next(err)
-    }
-  }
+  // ... other functions
   const markAsRead = async (req, res, next) => {
     try {
       const { user_id, article_id } = req.body
@@ -49,14 +14,20 @@ const ArticleController = () => {
       if (!validateUserIdAndArticleId(user_id, article_id)) {
         return next(new ApiError('Invalid user_id or article_id', 400))
       }
+      // Check if user and article exist
+      const userExists = await ArticleRepository.findUserById(user_id)
+      const articleExists = await ArticleRepository.findArticleById(article_id)
+      if (!userExists || !articleExists) {
+        return next(new ApiError('User or Article does not exist', 404))
+      }
       // Check if record exists
-      const recordExists = await ArticleRepository.checkRecordExists(user_id, article_id)
+      const recordExists = await UserArticlesRepository.findUserArticle(user_id, article_id)
       if (recordExists) {
         // Update record
-        await ArticleRepository.updateReadAt(user_id, article_id)
+        await UserArticlesRepository.updateReadAt(user_id, article_id)
       } else {
         // Create new record
-        await ArticleRepository.createRecord(user_id, article_id)
+        await UserArticlesRepository.createUserArticle(user_id, article_id)
       }
       // Return success response
       return response(res).success({ message: 'Article has been marked as read' })
