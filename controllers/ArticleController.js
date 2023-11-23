@@ -1,7 +1,6 @@
-// PATH: /controllers/ArticleController.js
 const ArticleRepository = require('../repositories/ArticleRepository')
 const response = require('../utils/response')
-const { validatePage } = require('../utils/validate')
+const { validatePage, validateUserIdAndArticleId } = require('../utils/validate')
 const validateId = require('../utils/validateId')
 const ApiError = require('../utils/api-error')
 const { formatArticles } = require('../utils/articleHelper')
@@ -43,9 +42,32 @@ const ArticleController = () => {
       return next(err)
     }
   }
+  const markAsRead = async (req, res, next) => {
+    try {
+      const { user_id, article_id } = req.body
+      // Validate user_id and article_id
+      if (!validateUserIdAndArticleId(user_id, article_id)) {
+        return next(new ApiError('Invalid user_id or article_id', 400))
+      }
+      // Check if record exists
+      const recordExists = await ArticleRepository.checkRecordExists(user_id, article_id)
+      if (recordExists) {
+        // Update record
+        await ArticleRepository.updateReadAt(user_id, article_id)
+      } else {
+        // Create new record
+        await ArticleRepository.createRecord(user_id, article_id)
+      }
+      // Return success response
+      return response(res).success({ message: 'Article has been marked as read' })
+    } catch (err) {
+      return next(err)
+    }
+  }
   return {
     getArticles,
-    getArticleDetails
+    getArticleDetails,
+    markAsRead
   }
 }
 module.exports = ArticleController
