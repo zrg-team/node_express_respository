@@ -33,9 +33,45 @@ class InvalidInputError extends ApiError {
     super(message, httpStatus.BAD_REQUEST)
   }
 }
+class RegistrationError extends ApiError {
+  constructor (message = 'Registration error') {
+    super(message, httpStatus.BAD_REQUEST)
+  }
+}
+class EmailValidationError extends RegistrationError {
+  constructor (message = 'Email is not valid') {
+    super(message, httpStatus.BAD_REQUEST)
+  }
+}
+class PasswordValidationError extends RegistrationError {
+  constructor (message = 'Password is not valid') {
+    super(message, httpStatus.BAD_REQUEST)
+  }
+}
+class EmailConfirmationError extends RegistrationError {
+  constructor (message = 'Email confirmation error') {
+    super(message, httpStatus.BAD_REQUEST)
+  }
+}
+class EmailAlreadyRegisteredError extends RegistrationError {
+  constructor (message = 'Email is already registered') {
+    super(message, httpStatus.BAD_REQUEST)
+  }
+}
+class PasswordConfirmationError extends RegistrationError {
+  constructor (message = 'Password confirmation does not match') {
+    super(message, httpStatus.BAD_REQUEST)
+  }
+}
 module.exports = {
   ApiError,
   PermissionError,
   ShopNotFoundError,
-  InvalidInputError
+  InvalidInputError,
+  RegistrationError,
+  EmailValidationError,
+  PasswordValidationError,
+  EmailConfirmationError,
+  EmailAlreadyRegisteredError,
+  PasswordConfirmationError
 }

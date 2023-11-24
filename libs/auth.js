@@ -2,22 +2,24 @@ const jwt = require('jsonwebtoken')
 const status = require('http-status')
 const ApiError = require('../utils/api-error')
 const config = require('../config')
-
 const utils = {
   issue: (payload, expiresIn = 1000800) => jwt.sign(payload, config.jwt.secret, { expiresIn }),
-  verify: (token, cb) => jwt.verify(token, config.jwt.secret, {}, cb)
+  verify: (token, cb) => jwt.verify(token, config.jwt.secret, {}, cb),
+  generateToken: (user) => {
+    const payload = {
+      id: user.id,
+      email: user.email,
+    };
+    return jwt.sign(payload, config.jwt.secret, { expiresIn: '1h' });
+  }
 }
-
 function authenticate (req) {
   let tokenToVerify
-
   if (req.header('Authorization')) {
     const parts = req.header('Authorization').split(' ')
-
     if (parts.length === 2) {
       const scheme = parts[0]
       const credentials = parts[1]
-
       if (/^Bearer$/.test(scheme)) {
         tokenToVerify = credentials
       } else {
@@ -34,7 +36,6 @@ function authenticate (req) {
   }
   return [null, tokenToVerify]
 }
-
 function validateToken (type, token) {
   switch (type) {
     case 'ADMIN':
@@ -43,7 +44,6 @@ function validateToken (type, token) {
       return token.type_code === 'ADMIN' && token.role_code === 'OPERATOR'
   }
 }
-
 // usually: "Authorization: Bearer [token]" or "token: [token]"
 const service = {
   all: () => (req, res, next) => {
@@ -91,7 +91,6 @@ const service = {
     })
   }
 }
-
 module.exports = {
   service,
   utils

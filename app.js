@@ -1,3 +1,4 @@
+// PATH: /app.js
 /* global Promise */
 global.Promise = require('bluebird')
 const http = require('http')
@@ -16,9 +17,8 @@ const fs = require('fs')
 const path = require('path')
 const _ = require('lodash')
 const setupRoutes = require('././libs/routes')
-
+const UserController = require('./controllers/UserController') // Add this line
 const exitProcess = () => setTimeout(() => process.exit(1), 100)
-
 /** Global process events */
 Promise.onPossiblyUnhandledRejection(async (error) => {
   await util.traceError(error)
@@ -32,7 +32,6 @@ process.on('unhandledRejection', async (error) => {
   await util.traceError(error)
   exitProcess()
 })
-
 const start = async () => {
   try {
     logger.info('[Server] Initializing application')
@@ -47,7 +46,6 @@ const start = async () => {
     }))
     app.use(bodyParser.urlencoded({ extended: false }))
     app.use(bodyParser.json())
-
     // LOG REQUEST
     app.use((req, res, next) => {
       const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress
@@ -67,6 +65,8 @@ const start = async () => {
     })
     // ROUTES
     setupRoutes(app)
+    // Add new route for user registration
+    app.post('/register', UserController.register) // Add this line
     // NOT FOUND
     app.use((req, res) => response(res).error(new ApiError('Api not found', status.NOT_FOUND)))
     // ERROR HANDLING
@@ -90,7 +90,6 @@ const start = async () => {
     exitProcess()
   }
 }
-
 module.exports = {
   start
 }
