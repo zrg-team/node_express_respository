@@ -9,7 +9,7 @@ class ShopRepository extends BaseRepository {
     this.DEFAULT_SORT = [['id', 'DESC']]
     this.DEFAULT_PAGE = 0
   }
-  async updateShop(id, name, address) {
+  async updateShop({ id, name, address }) {
     let updatedShop;
     try {
       await transaction(async () => {

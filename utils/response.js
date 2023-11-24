@@ -18,6 +18,11 @@ module.exports = (res = {}) => {
         .status(200)
         .json({ success: true, shopId: shop.id, shopName: shop.name, shopAddress: shop.address })
     },
+    sendUpdateConfirmation: ({ id, name, address }) => {
+      return res
+        .status(200)
+        .json({ success: true, id, name, address })
+    },
     error: (err) => {
       if (err instanceof ApiError && err.status === status.BAD_REQUEST) {
         return res.status(err.status).json({ success: false, errors: err.message })
