@@ -11,14 +11,21 @@ class UserRepository extends BaseRepository {
     this.DEFAULT_SORT = [['id', 'DESC']]
     this.DEFAULT_PAGE = 0
   }
-  async createUser(email, password, password_confirmation) {
-    if (password !== password_confirmation) {
-      throw new ApiError('Passwords do not match', 400);
-    }
+  async validateEmail(email) {
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       throw new ApiError('Email already registered', 400);
     }
+    return true;
+  }
+  async validatePassword(password, password_confirmation) {
+    if (password !== password_confirmation) {
+      throw new ApiError('Passwords do not match', 400);
+    }
+    // Add more security requirements if needed
+    return true;
+  }
+  async createUser(email, password) {
     const encryptedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({ email, password: encryptedPassword, emailConfirmed: false });
     return user;
@@ -31,6 +38,19 @@ class UserRepository extends BaseRepository {
     user.emailConfirmed = true;
     await user.save();
   }
-  // Other functions...
+  async registerUser(email, password, password_confirmation) {
+    await this.validateEmail(email);
+    await this.validatePassword(password, password_confirmation);
+    const user = await this.createUser(email, password);
+    // Send confirmation email
+    // This is a placeholder, replace with your actual email sending code
+    nodemailer.sendMail({
+      from: 'no-reply@yourdomain.com',
+      to: email,
+      subject: 'Please confirm your email',
+      text: 'Please confirm your email'
+    });
+    return user;
+  }
 }
 module.exports = new UserRepository()

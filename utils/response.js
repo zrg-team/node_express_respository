@@ -23,6 +23,11 @@ module.exports = (res = {}) => {
         .status(200)
         .json({ success: true, generatingId: generating.id, createdAt: generating.created_at, updatedAt: generating.updated_at })
     },
+    successResponse: (user) => {
+      return res
+        .status(200)
+        .json({ success: true, userId: user.id, userEmail: user.email, userConfirmed: user.confirmed })
+    },
     sendUpdateConfirmation: ({ id, name, address }) => {
       return res
         .status(200)
