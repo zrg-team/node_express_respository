@@ -1,5 +1,3 @@
-// PATH: /models/user.js
-module.exports = function (sequelize, DataTypes) {
   const User = sequelize.define('users', {
     id: {
       type: DataTypes.INTEGER,
@@ -14,6 +12,19 @@ module.exports = function (sequelize, DataTypes) {
     password: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true
+      }
+    },
+    confirmation_status: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
     },
     status: {
       type: DataTypes.INTEGER,

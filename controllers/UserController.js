@@ -28,7 +28,7 @@ const UserController = () => {
     try {
       const { email, password, password_confirmation } = req.body;
       // Validate email
-      const emailError = validateEmail(email);
+      const emailError = errorHelper.validateEmail(email);
       if (emailError) {
         return next(new ApiError(emailError, status.BAD_REQUEST));
       }
@@ -38,7 +38,7 @@ const UserController = () => {
         return next(new ApiError('Email already registered', status.BAD_REQUEST));
       }
       // Validate password
-      const passwordError = validatePassword(password, password_confirmation);
+      const passwordError = errorHelper.validatePassword(password, password_confirmation);
       if (passwordError) {
         return next(new ApiError(passwordError, status.BAD_REQUEST));
       }

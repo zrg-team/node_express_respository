@@ -9,6 +9,18 @@
       "charset": "utf8",
       "collate": "utf8_general_ci"
     },
-    "log": true
+    "log": true,
+    "emailService": {
+      "smtp": {
+        "host": "smtp.example.com",
+        "port": 587,
+        "secure": false,
+        "auth": {
+          "user": "email@example.com",
+          "pass": "password"
+        }
+      },
+      "fromEmail": "no-reply@example.com"
+    }
   }
 }
