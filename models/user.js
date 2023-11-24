@@ -1,3 +1,4 @@
+// PATH: /models/user.js
 module.exports = function (sequelize, DataTypes) {
   const User = sequelize.define('users', {
     id: {
@@ -35,6 +36,14 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: true
     },
     name: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    shop_name: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    shop_address: {
       type: DataTypes.STRING,
       allowNull: true
     }

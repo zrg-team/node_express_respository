@@ -1,6 +1,9 @@
 const BaseRepository = require('./BaseRepository')
 const User = require('../models/user')
+const Shop = require('../models/shop')
 const bcrypt = require('bcrypt')
+const { transaction } = require('../utils/transaction')
+const ApiError = require('../utils/api-error')
 class UserRepository extends BaseRepository {
   constructor () {
     super('user')
@@ -9,38 +12,30 @@ class UserRepository extends BaseRepository {
     this.DEFAULT_PAGE = 0
   }
   async registerUser(email, password, passwordConfirmation) {
-    if (password !== passwordConfirmation) {
-      throw new Error('Password and password confirmation do not match');
-    }
-    const existingUser = await User.findOne({ where: { email: email } });
-    if (existingUser) {
-      throw new Error('Email is already registered');
-    }
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({
-      email: email,
-      password: hashedPassword,
-      emailConfirmed: false
-    });
-    // TODO: Send confirmation email
-    return {
-      id: user.id,
-      email: user.email,
-      emailConfirmed: user.emailConfirmed
-    };
+    // ... existing code ...
   }
   async confirmEmail(email) {
-    const user = await User.findOne({ where: { email: email } });
-    if (!user) {
-      throw new Error('User not found');
+    // ... existing code ...
+  }
+  async updateShop(id, name, address, userId) {
+    let updatedShop;
+    try {
+      await transaction(async () => {
+        const shop = await Shop.findByPk(id);
+        if (!shop) {
+          throw new ApiError('Shop not found', 404);
+        }
+        if (shop.userId !== userId) {
+          throw new ApiError('User does not have permission to update this shop', 403);
+        }
+        shop.name = name;
+        shop.address = address;
+        updatedShop = await shop.save();
+      });
+    } catch (error) {
+      throw new ApiError('Update operation failed', 500);
     }
-    user.emailConfirmed = true;
-    await user.save();
-    return {
-      id: user.id,
-      email: user.email,
-      emailConfirmed: user.emailConfirmed
-    };
+    return updatedShop;
   }
 }
 module.exports = new UserRepository()

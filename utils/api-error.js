@@ -1,5 +1,4 @@
 const httpStatus = require('http-status')
-
 class ExtendableError extends Error {
   constructor (message, status) {
     super(message)
@@ -9,7 +8,6 @@ class ExtendableError extends Error {
     Error.captureStackTrace(this, this.constructor.name)
   }
 }
-
 class ApiError extends ExtendableError {
   /**
      * Creates an API error.
@@ -20,5 +18,24 @@ class ApiError extends ExtendableError {
     super(message, status)
   }
 }
-
-module.exports = ApiError
+class PermissionError extends ApiError {
+  constructor (message = 'You do not have the necessary permissions') {
+    super(message, httpStatus.FORBIDDEN)
+  }
+}
+class ShopNotFoundError extends ApiError {
+  constructor (message = 'Shop ID does not exist') {
+    super(message, httpStatus.NOT_FOUND)
+  }
+}
+class InvalidInputError extends ApiError {
+  constructor (message = 'New name and address are not valid') {
+    super(message, httpStatus.BAD_REQUEST)
+  }
+}
+module.exports = {
+  ApiError,
+  PermissionError,
+  ShopNotFoundError,
+  InvalidInputError
+}
