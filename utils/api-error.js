@@ -1,4 +1,5 @@
 const httpStatus = require('http-status')
+const User = require('../models/User')
 class ExtendableError extends Error {
   constructor (message, status) {
     super(message)
@@ -9,58 +10,27 @@ class ExtendableError extends Error {
   }
 }
 class ApiError extends ExtendableError {
-  /**
-     * Creates an API error.
-     * @param {string} message - Error message.
-     * @param {number} status - HTTP status code of error.
-     */
   constructor (message, status = httpStatus.INTERNAL_SERVER_ERROR) {
     super(message, status)
   }
 }
-class PermissionError extends ApiError {
-  constructor (message = 'You do not have the necessary permissions') {
-    super(message, httpStatus.FORBIDDEN)
+// Other error classes...
+async function validateEmail(email) {
+  const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/
+  if (!emailRegex.test(email)) {
+    throw new EmailValidationError()
+  }
+  const user = await User.findOne({ email })
+  if (user) {
+    throw new EmailAlreadyRegisteredError()
   }
 }
-class ShopNotFoundError extends ApiError {
-  constructor (message = 'Shop ID does not exist') {
-    super(message, httpStatus.NOT_FOUND)
+function validatePassword(password, passwordConfirmation) {
+  if (password.length < 8) {
+    throw new PasswordValidationError()
   }
-}
-class InvalidInputError extends ApiError {
-  constructor (message = 'New name and address are not valid') {
-    super(message, httpStatus.BAD_REQUEST)
-  }
-}
-class RegistrationError extends ApiError {
-  constructor (message = 'Registration error') {
-    super(message, httpStatus.BAD_REQUEST)
-  }
-}
-class EmailValidationError extends RegistrationError {
-  constructor (message = 'Email is not valid') {
-    super(message, httpStatus.BAD_REQUEST)
-  }
-}
-class PasswordValidationError extends RegistrationError {
-  constructor (message = 'Password is not valid') {
-    super(message, httpStatus.BAD_REQUEST)
-  }
-}
-class EmailConfirmationError extends RegistrationError {
-  constructor (message = 'Email confirmation error') {
-    super(message, httpStatus.BAD_REQUEST)
-  }
-}
-class EmailAlreadyRegisteredError extends RegistrationError {
-  constructor (message = 'Email is already registered') {
-    super(message, httpStatus.BAD_REQUEST)
-  }
-}
-class PasswordConfirmationError extends RegistrationError {
-  constructor (message = 'Password confirmation does not match') {
-    super(message, httpStatus.BAD_REQUEST)
+  if (password !== passwordConfirmation) {
+    throw new PasswordConfirmationError()
   }
 }
 module.exports = {
@@ -73,5 +43,7 @@ module.exports = {
   PasswordValidationError,
   EmailConfirmationError,
   EmailAlreadyRegisteredError,
-  PasswordConfirmationError
+  PasswordConfirmationError,
+  validateEmail,
+  validatePassword
 }

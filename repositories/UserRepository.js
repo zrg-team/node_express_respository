@@ -21,31 +21,10 @@ class UserRepository extends BaseRepository {
     }
     const encryptedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({ email, password: encryptedPassword, emailConfirmed: false });
-    // Send confirmation email
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: 'your-email@gmail.com',
-        pass: 'your-password'
-      }
-    });
-    const mailOptions = {
-      from: 'your-email@gmail.com',
-      to: email,
-      subject: 'Email Confirmation',
-      text: 'Please confirm your email'
-    };
-    transporter.sendMail(mailOptions, function(error, info){
-      if (error) {
-        console.log(error);
-      } else {
-        console.log('Email sent: ' + info.response);
-      }
-    });
     return user;
   }
-  async confirmEmail(userId) {
-    const user = await User.findByPk(userId);
+  async confirmEmail(email) {
+    const user = await User.findOne({ where: { email } });
     if (!user) {
       throw new ApiError('User not found', 404);
     }
