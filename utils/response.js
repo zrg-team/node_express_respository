@@ -8,6 +8,11 @@ module.exports = (res = {}) => {
         .status(200)
         .json({ success: true, ...data })
     },
+    userUpdateSuccess: (user) => {
+      return res
+        .status(200)
+        .json({ success: true, userId: user.id, userEmail: user.email, userConfirmed: user.confirmed })
+    },
     shopUpdateSuccess: (shop) => {
       return res
         .status(200)

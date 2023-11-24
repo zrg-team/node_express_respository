@@ -1,61 +1,42 @@
-const logger = require('./logger')
-const ApiError = require('./apiError')
-const status = require('http-status')
-const sequelizeUtils = require('./sequelizeUtils')
-const moment = require('moment')
+const bcrypt = require('bcrypt');
+const nodemailer = require('nodemailer');
+const jwt = require('jsonwebtoken');
+const config = require('../config');
 module.exports = {
-  traceError: (error) => {
-    if (error instanceof ApiError && error.status === status.BAD_REQUEST) {
-      error.message = JSON.stringify(error.message)
+  ...
+  registerUser: async (email, password, passwordConfirmation) => {
+    if (!this.validateEmail(email)) {
+      throw new ApiError('Invalid email format', status.BAD_REQUEST);
     }
-    logger.error(error instanceof Error ? error.stack : error)
-  },
-  validateUserIdAndArticleId: async (userId, articleId) => {
-    if (!Number.isInteger(userId) || userId <= 0 || !Number.isInteger(articleId) || articleId <= 0) {
-      throw new Error('User ID and Article ID must be positive integers');
+    const userExists = await sequelizeUtils.checkIfExists('users', { email });
+    if (userExists) {
+      throw new ApiError('Email already registered', status.BAD_REQUEST);
     }
-    const userExists = await sequelizeUtils.checkIfExists('users', userId);
-    const articleExists = await sequelizeUtils.checkIfExists('articles', articleId);
-    if (!userExists || !articleExists) {
-      throw new Error('User ID or Article ID does not exist');
+    if (!this.validatePassword(password, passwordConfirmation)) {
+      throw new ApiError('Invalid password or password confirmation', status.BAD_REQUEST);
     }
-    return true;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await sequelizeUtils.create('users', { email, password: hashedPassword });
+    const token = jwt.sign({ userId: user.id }, config.jwtSecret, { expiresIn: '1h' });
+    const transporter = nodemailer.createTransport(config.email);
+    const mailOptions = {
+      from: 'no-reply@example.com',
+      to: email,
+      subject: 'Email Confirmation',
+      text: `Please confirm your email by clicking on the following link: \nhttp://${config.host}/confirm/${token}\n`
+    };
+    await transporter.sendMail(mailOptions);
+    return { id: user.id, email: user.email, confirmed: false };
   },
-  markArticleAsRead: async (userId, articleId) => {
-    await this.validateUserIdAndArticleId(userId, articleId);
-    const recordExists = await sequelizeUtils.checkIfExists('user_articles', { userId, articleId });
-    if (!recordExists) {
-      await sequelizeUtils.create('user_articles', { userId, articleId, read_at: moment().format() });
-    } else {
-      await sequelizeUtils.update('user_articles', { userId, articleId }, { read_at: moment().format() });
+  confirmEmail: async (token) => {
+    let decoded;
+    try {
+      decoded = jwt.verify(token, config.jwtSecret);
+    } catch (e) {
+      throw new ApiError('Invalid or expired confirmation token', status.BAD_REQUEST);
     }
-    return 'Article has been marked as read by the user';
+    const user = await sequelizeUtils.update('users', { id: decoded.userId }, { confirmed: true });
+    return { id: user.id, email: user.email, confirmed: true };
   },
-  calculateTotalPages: (totalArticles, articlesPerPage) => {
-    return Math.ceil(totalArticles / articlesPerPage);
-  },
-  validatePageNumber: (page) => {
-    if (!Number.isInteger(page) || page <= 0) {
-      throw new Error('Page number must be a positive integer');
-    }
-    return page;
-  },
-  calculateOffset: (page, articlesPerPage) => {
-    return (page - 1) * articlesPerPage;
-  },
-  trimArticleFields: (article) => {
-    article.title = article.title.length > 100 ? article.title.substring(0, 100) + '...' : article.title;
-    article.description = article.description.length > 200 ? article.description.substring(0, 200) + '...' : article.description;
-    return article;
-  },
-  getArticleList: async (page) => {
-    this.validatePageNumber(page);
-    const limit = 10;
-    const offset = this.calculateOffset(page, limit);
-    const articles = await sequelizeUtils.query('articles', { order: [['created_at', 'DESC']], offset, limit });
-    articles.forEach(article => this.trimArticleFields(article));
-    const totalArticles = await sequelizeUtils.count('articles');
-    const totalPages = this.calculateTotalPages(totalArticles, limit);
-    return { articles, totalArticles, totalPages };
-  }
+  ...
 }

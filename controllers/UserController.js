@@ -24,7 +24,7 @@ const defaultCriteria = new DefaultCriteria()
 const sensitiveCriteria = new SensitiveCriteria()
 const UserController = () => {
   // ... other functions
-  const register = async (req, res, next) => {
+  const registerUser = async (req, res, next) => {
     try {
       const { email, password, password_confirmation } = req.body;
       // Validate email
@@ -33,7 +33,7 @@ const UserController = () => {
         return next(new ApiError(emailError, status.BAD_REQUEST));
       }
       // Check if email already exists
-      const existingUser = await userRepository.findByEmail(email);
+      const existingUser = await userRepository.checkEmailExists(email);
       if (existingUser) {
         return next(new ApiError('Email already registered', status.BAD_REQUEST));
       }
@@ -63,7 +63,7 @@ const UserController = () => {
     changePassword,
     forgotPassword,
     version,
-    register  // Add the new function here
+    registerUser  // Add the new function here
   }
 }
 module.exports = UserController

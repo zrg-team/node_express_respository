@@ -1,17 +1,10 @@
+module.exports = function (sequelize, DataTypes) {
   const User = sequelize.define('users', {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
-    },
-    user_name: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false
     },
     email: {
       type: DataTypes.STRING,
@@ -21,10 +14,18 @@
         isEmail: true
       }
     },
-    confirmation_status: {
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    confirmationStatus: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false
+    },
+    user_name: {
+      type: DataTypes.STRING,
+      allowNull: false
     },
     status: {
       type: DataTypes.INTEGER,
