@@ -19,8 +19,6 @@ const utils = {
     return true;
   }
 }
-// ... rest of the code
 module.exports = {
-  service,
   utils
 }

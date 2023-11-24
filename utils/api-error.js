@@ -14,7 +14,51 @@ class ApiError extends ExtendableError {
     super(message, status)
   }
 }
-// Other error classes...
+class PermissionError extends ApiError {
+  constructor (message = 'Permission denied') {
+    super(message, httpStatus.FORBIDDEN)
+  }
+}
+class ShopNotFoundError extends ApiError {
+  constructor (message = 'Shop not found') {
+    super(message, httpStatus.NOT_FOUND)
+  }
+}
+class InvalidInputError extends ApiError {
+  constructor (message = 'Invalid input') {
+    super(message, httpStatus.BAD_REQUEST)
+  }
+}
+class RegistrationError extends ApiError {
+  constructor (message = 'Registration error') {
+    super(message, httpStatus.BAD_REQUEST)
+  }
+}
+class EmailValidationError extends ApiError {
+  constructor (message = 'Invalid email') {
+    super(message, httpStatus.BAD_REQUEST)
+  }
+}
+class PasswordValidationError extends ApiError {
+  constructor (message = 'Invalid password') {
+    super(message, httpStatus.BAD_REQUEST)
+  }
+}
+class EmailConfirmationError extends ApiError {
+  constructor (message = 'Email confirmation error') {
+    super(message, httpStatus.BAD_REQUEST)
+  }
+}
+class EmailAlreadyRegisteredError extends ApiError {
+  constructor (message = 'Email already registered') {
+    super(message, httpStatus.CONFLICT)
+  }
+}
+class PasswordConfirmationError extends ApiError {
+  constructor (message = 'Password confirmation error') {
+    super(message, httpStatus.BAD_REQUEST)
+  }
+}
 async function validateEmail(email) {
   const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/
   if (!emailRegex.test(email)) {

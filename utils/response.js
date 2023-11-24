@@ -18,6 +18,11 @@ module.exports = (res = {}) => {
         .status(200)
         .json({ success: true, shopId: shop.id, shopName: shop.name, shopAddress: shop.address })
     },
+    generatingUpdateSuccess: (generating) => {
+      return res
+        .status(200)
+        .json({ success: true, generatingId: generating.id, createdAt: generating.created_at, updatedAt: generating.updated_at })
+    },
     sendUpdateConfirmation: ({ id, name, address }) => {
       return res
         .status(200)
