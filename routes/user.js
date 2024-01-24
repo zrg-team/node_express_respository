@@ -25,13 +25,6 @@ const routes = {
       file.all.none()
     ]
   },
-  'PUT /articles/:id': {
-    path: 'DashboardController.editArticle',
-    middlewares: [
-      auth.service.all(),
-      file.all.none()
-    ]
-  },
   'POST /login': {
     path: 'UserController.login',
     middlewares: [
@@ -50,16 +43,30 @@ const routes = {
       file.all.none()
     ]
   },
-  'PUT /articles/:id/status': {
-    path: 'DashboardController.updateArticleStatus',
+  'POST /password': {
+    path: 'UserController.changePassword',
+    middlewares: [
+      file.all.none()
+    ]
+  },
+  'POST /articles': {
+    path: 'UserController.createArticle',
     middlewares: [
       auth.service.all(),
       file.all.none()
     ]
   },
-  'POST /password': {
-    path: 'UserController.changePassword',
+  'PUT /articles/:id': {
+    path: 'DashboardController.editArticle',
     middlewares: [
+      auth.service.all(),
+      file.all.none()
+    ]
+  },
+  'PUT /articles/:id/status': {
+    path: 'DashboardController.updateArticleStatus',
+    middlewares: [
+      auth.service.all(),
       file.all.none()
     ]
   },

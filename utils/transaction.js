@@ -1,6 +1,7 @@
 const status = require('http-status')
 const ApiError = require('../utils/api-error')
 const errorParser = require('../utils/errors')
+const { Article, User } = require('../models') // Assuming models are exported from /models/index.js
 const dbService = require('.././libs/db')
 
 module.exports = {
@@ -9,6 +10,21 @@ module.exports = {
     try {
       // get transaction
       transaction = await dbService.database.transaction(option)
+      // Check if the process is for creating an article
+      if (process.name === 'createArticleProcess') {
+        // Validate user existence
+        const user = await User.findByPk(process.arguments[0].user_id)
+        if (!user) {
+          throw new ApiError([{ message: "User not found." }], status.NOT_FOUND)
+        }
+        // Validate title and content
+        if (!process.arguments[0].title || process.arguments[0].title.length > 200) {
+          throw new ApiError([{ message: "The title is required and cannot be more than 200 characters." }], status.UNPROCESSABLE_ENTITY)
+        }
+        if (!process.arguments[0].content) {
+          throw new ApiError([{ message: "The content is required." }], status.UNPROCESSABLE_ENTITY)
+        }
+      }
       const result = await process(transaction)
       // commit
       await transaction.commit()
