@@ -49,6 +49,13 @@ const routes = {
       file.all.none()
     ]
   },
+  'GET /user/:userId/articles': {
+    path: 'DashboardController.retrieveUserArticles',
+    middlewares: [
+      auth.service.all(),
+      file.all.none()
+    ]
+  },
   'GET /version': {
     path: 'UserController.version',
     middlewares: [
