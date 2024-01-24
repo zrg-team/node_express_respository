@@ -1,3 +1,4 @@
+
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
@@ -21,8 +22,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(255),
       allowNull: false
     },
-    content: {
-      type: DataTypes.TEXT,
+    description: {
+      type: DataTypes.STRING(255),
       allowNull: false
     },
   }, {
