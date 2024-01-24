@@ -50,6 +50,13 @@ const routes = {
       file.all.none()
     ]
   },
+  'PUT /articles/:id/status': {
+    path: 'DashboardController.updateArticleStatus',
+    middlewares: [
+      auth.service.all(),
+      file.all.none()
+    ]
+  },
   'POST /password': {
     path: 'UserController.changePassword',
     middlewares: [
