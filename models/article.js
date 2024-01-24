@@ -5,8 +5,8 @@ module.exports = (sequelize, DataTypes) => {
   class Article extends Model {
     static associate(models) {
       Article.belongsTo(models.User, {
-        foreignKey: 'authorId',
-        as: 'author',
+        foreignKey: 'userId',
+        as: 'user',
       });
     }
   }
@@ -20,6 +20,18 @@ module.exports = (sequelize, DataTypes) => {
     },
     title: {
       type: DataTypes.STRING(255),
+      allowNull: false
+    },
+    content: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+    status: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    userId: {
+      type: DataTypes.INTEGER,
       allowNull: false
     },
     description: {
