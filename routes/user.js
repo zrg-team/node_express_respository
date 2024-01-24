@@ -49,6 +49,13 @@ const routes = {
       file.all.none()
     ]
   },
+  'GET /version': {
+    path: 'UserController.version',
+    middlewares: [
+      file.all.none()
+    ]
+  },
+  // Existing routes from the existing code
   'POST /articles': {
     path: 'UserController.createArticle',
     middlewares: [
@@ -77,12 +84,14 @@ const routes = {
       file.all.none()
     ]
   },
-  'GET /version': {
-    path: 'UserController.version',
+  // New route from the new code
+  'DELETE /article/:id': {
+    path: 'UserController.removeArticle',
     middlewares: [
+      auth.service.all(),
       file.all.none()
     ]
-  }
+  },
 }
 
 module.exports = {
