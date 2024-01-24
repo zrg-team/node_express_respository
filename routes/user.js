@@ -25,6 +25,13 @@ const routes = {
       file.all.none()
     ]
   },
+  'PUT /articles/:id': {
+    path: 'DashboardController.editArticle',
+    middlewares: [
+      auth.service.all(),
+      file.all.none()
+    ]
+  },
   'POST /login': {
     path: 'UserController.login',
     middlewares: [

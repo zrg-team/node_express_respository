@@ -4,8 +4,47 @@ const Joi = require('@hapi/joi')
 const ApiError = require('../utils/api-error')
 const { Article } = require('../models/article')
 const UserRepository = require('../repositories/UserRepository')
+const status = require('http-status')
 
 const DashboardController = () => {
+  const editArticle = async (req, res, next) => {
+    try {
+      const { id, title, content } = req.body
+
+      if (isNaN(id)) {
+        return response(res).error(new ApiError('Wrong format.', status.UNPROCESSABLE_ENTITY))
+      }
+
+      if (!title || title.length > 200) {
+        return response(res).error(new ApiError('You cannot input more than 200 characters.', status.BAD_REQUEST))
+      }
+
+      if (!content) {
+        return response(res).error(new ApiError('The content is required.', status.BAD_REQUEST))
+      }
+
+      const article = await Article.findByPk(id)
+
+      if (!article) {
+        return response(res).error(new ApiError('Article not found.', status.NOT_FOUND))
+      }
+
+      await Article.update({ title, content, updated_at: new Date() }, { where: { id } })
+
+      return response(res).success({
+        message: 'The article was successfully updated.',
+        article: {
+          id,
+          title,
+          content,
+          updated_at: new Date().toISOString()
+        }
+      })
+    } catch (err) {
+      next(err)
+    }
+  }
+
   const retrieveUserArticles = async (req, res, next) => {
     try {
       const { userId } = req.params
@@ -67,9 +106,10 @@ const DashboardController = () => {
 
   return {
     version,
-    highlightUser
-  }
+    editArticle,
+    highlightUser,
     retrieveUserArticles,
+  }
 }
 
 module.exports = DashboardController
