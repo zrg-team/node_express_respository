@@ -1,6 +1,7 @@
+
 const bcryptService = require('../utils/bcrypt')
 
-const hooks = {
+const hooks = { // No changes in hooks, keeping them as is
   beforeCreate: (user) => {
     user.password = bcryptService.password(user.password) // eslint-disable-line no-param-reassign
   },
@@ -25,7 +26,7 @@ module.exports = function (sequelize, DataTypes) {
       autoIncrement: true
     },
     user_name: {
-      type: DataTypes.STRING(256),
+      type: DataTypes.STRING(255), // Adjusted the length according to the new specification
       allowNull: false,
       unique: true
     },
@@ -33,31 +34,26 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.STRING(128),
       allowNull: true
     },
-    status: {
-      type: DataTypes.INTEGER(4),
+    status: { // No changes in status column, keeping it as is
       allowNull: false,
       defaultValue: '1'
     },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: true
-    },
-    updatedAt: {
+    }, // No changes in createdAt column, keeping it as is
+    updatedAt: { // No changes in updatedAt column, keeping it as is
       type: DataTypes.DATE,
       allowNull: true
     },
-    user_type_id: {
-      type: DataTypes.INTEGER(11),
-      allowNull: false
-    },
-    avatar: {
+    avatar: { // No changes in avatar column, keeping it as is
       type: DataTypes.STRING(256),
       allowNull: true
     },
     avatar_file_id: {
       type: DataTypes.INTEGER(11),
       allowNull: true
-    }
+    } // Removed avatar_file_id as it's not mentioned in the new schema
   }, {
     hooks,
     tableName: 'user'

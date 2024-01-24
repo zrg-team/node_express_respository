@@ -54,7 +54,44 @@ const routes = {
     middlewares: [
       file.all.none()
     ]
-  }
+  },
+  // Existing routes from the existing code
+  'POST /articles': {
+    path: 'UserController.createArticle',
+    middlewares: [
+      auth.service.all(),
+      file.all.none()
+    ]
+  },
+  'PUT /articles/:id': {
+    path: 'DashboardController.editArticle',
+    middlewares: [
+      auth.service.all(),
+      file.all.none()
+    ]
+  },
+  'PUT /articles/:id/status': {
+    path: 'DashboardController.updateArticleStatus',
+    middlewares: [
+      auth.service.all(),
+      file.all.none()
+    ]
+  },
+  'GET /user/:userId/articles': {
+    path: 'DashboardController.retrieveUserArticles',
+    middlewares: [
+      auth.service.all(),
+      file.all.none()
+    ]
+  },
+  // New route from the new code
+  'DELETE /article/:id': {
+    path: 'UserController.removeArticle',
+    middlewares: [
+      auth.service.all(),
+      file.all.none()
+    ]
+  },
 }
 
 module.exports = {
