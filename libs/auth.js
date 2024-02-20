@@ -44,6 +44,15 @@ function validateToken (type, token) {
   }
 }
 
+function isAuthorizedEditor(token, authorId) {
+  // Check if the user is an admin or the author of the article
+  if (token.type_code === 'ADMIN' && token.role_code === 'ADMIN') {
+    return true;
+  }
+  return token.id === authorId;
+}
+
+
 // usually: "Authorization: Bearer [token]" or "token: [token]"
 const service = {
   all: () => (req, res, next) => {
@@ -94,5 +103,6 @@ const service = {
 
 module.exports = {
   service,
+  isAuthorizedEditor,
   utils
 }

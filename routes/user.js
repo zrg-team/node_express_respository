@@ -49,6 +49,12 @@ const routes = {
       file.all.none()
     ]
   },
+  'PUT /api/articles/{id}': {
+    path: 'UserController.updateArticle',
+    middlewares: [
+      auth.service.all()
+    ]
+  },
   'GET /version': {
     path: 'UserController.version',
     middlewares: [
