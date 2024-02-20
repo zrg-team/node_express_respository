@@ -8,7 +8,7 @@ const utils = {
   verify: (token, cb) => jwt.verify(token, config.jwt.secret, {}, cb)
 }
 
-function authenticate (req) {
+function authenticate(req) {
   let tokenToVerify
 
   if (req.header('Authorization')) {
@@ -35,25 +35,24 @@ function authenticate (req) {
   return [null, tokenToVerify]
 }
 
-function validateToken (type, token) {
+function validateToken(type, token) {
   switch (type) {
     case 'ADMIN':
       return token.type_code === 'ADMIN' && token.role_code === 'ADMIN'
     case 'OPERATOR':
       return token.type_code === 'ADMIN' && token.role_code === 'OPERATOR'
+    case 'WRITER':
+      return token.role === 'WRITER'
   }
 }
 
 function isAuthorizedEditor(token, authorId) {
-  // Check if the user is an admin or the author of the article
   if (token.type_code === 'ADMIN' && token.role_code === 'ADMIN') {
     return true;
   }
   return token.id === authorId;
 }
 
-
-// usually: "Authorization: Bearer [token]" or "token: [token]"
 const service = {
   all: () => (req, res, next) => {
     const [err, tokenToVerify] = authenticate(req)
@@ -79,6 +78,9 @@ const service = {
           return next(new ApiError('You dont have permission!', status.UNAUTHORIZED))
         }
         req.token = thisToken
+        if (roles.includes('WRITER') && !validateToken('WRITER', thisToken)) {
+          return next(new ApiError('You do not have permission to perform this action.', status.FORBIDDEN))
+        }
         return next()
       })
     }
