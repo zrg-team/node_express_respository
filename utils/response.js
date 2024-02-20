@@ -4,6 +4,17 @@ const ApiError = require('../utils/api-error')
 module.exports = (res = {}) => {
   const isDebug = process.env.DEBUG === 'true'
   return {
+    articlesSuccess: (data, total_pages, limit, page) => {
+      return res
+        .status(status.OK)
+        .json({
+          status: status.OK,
+          articles: data,
+          total_pages,
+          limit,
+          page
+        })
+    },
     success: (data) => {
       return res
         .status(200)

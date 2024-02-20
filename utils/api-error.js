@@ -1,3 +1,4 @@
+
 const httpStatus = require('http-status')
 
 class ExtendableError extends Error {
@@ -18,6 +19,22 @@ class ApiError extends ExtendableError {
      */
   constructor (message, status = httpStatus.INTERNAL_SERVER_ERROR) {
     super(message, status)
+  }
+
+  static titleLengthError() {
+    return new ApiError("You cannot input more than 200 characters.", httpStatus.BAD_REQUEST);
+  }
+
+  static dateFormatError() {
+    return new ApiError("Wrong date format.", httpStatus.UNPROCESSABLE_ENTITY);
+  }
+
+  static pageNumberError() {
+    return new ApiError("Page must be greater than 0.", httpStatus.BAD_REQUEST);
+  }
+
+  static parameterTypeError() {
+    return new ApiError("Wrong format.", httpStatus.BAD_REQUEST);
   }
 }
 
