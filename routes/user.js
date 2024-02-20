@@ -54,7 +54,23 @@ const routes = {
     middlewares: [
       file.all.none()
     ]
-  }
+  },
+  // New route from the new code
+  'POST /api/articles': {
+    path: 'DashboardController.createArticle',
+    middlewares: [
+      auth.service.all(),
+      auth.service.writerOnly(),
+      file.all.none()
+    ]
+  },
+  // Existing route from the existing code with a different HTTP method and path
+  'PUT /api/articles/{id}': {
+    path: 'UserController.updateArticle',
+    middlewares: [
+      auth.service.all()
+    ]
+  },
 }
 
 module.exports = {

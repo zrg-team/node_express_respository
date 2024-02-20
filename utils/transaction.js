@@ -1,3 +1,4 @@
+
 const status = require('http-status')
 const ApiError = require('../utils/api-error')
 const errorParser = require('../utils/errors')
@@ -14,11 +15,15 @@ module.exports = {
       await transaction.commit()
       return result
     } catch (err) {
-      await transaction.rollback().catch(() => {})
+      if (transaction) {
+        await transaction.rollback().catch(rollbackError => {
+          console.error('Transaction rollback error:', rollbackError);
+        });
+      }
       let errors = null
       if (err.name === 'SequelizeDatabaseError' && err.original) {
         errors = [errorParser.parseSQLErrors(err.original)]
-      } if (err && err.errors) {
+      } else if (err && err.errors) {
         errors = []
         err.errors.forEach(element => {
           errors.push({
@@ -31,7 +36,7 @@ module.exports = {
       if (errors) {
         throw new ApiError(errors, status.BAD_REQUEST)
       }
-      throw new ApiError(err)
+      throw new ApiError(err.message || 'An unexpected error occurred', err.status || status.INTERNAL_SERVER_ERROR)
     }
   }
 }
