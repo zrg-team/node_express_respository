@@ -1,20 +1,20 @@
 
 const Joi = require('@hapi/joi')
-const status = require('http-status')
-const { Article, ArticleTag, Tag } = require('../models')
-const BaseRepository = require('../repositories/BaseRepository')
-const auth = require('../libs/auth')
-const { sendMail } = require('../libs/email')
-const verifyRecaptcha = require('../libs/recaptcha')
-const errorHelper = require('../utils/errors')
-const bcryptService = require('../utils/bcrypt')
-const ApiError = require('../utils/api-error')
-const response = require('../utils/response')
-const userRepository = require('../repositories/UserRepository')
-const articleRepository = require('../repositories/ArticleRepository')
-const commentRepository = require('../repositories/CommentRepository')
-const DefaultCriteria = require('../criterias/DefaultCriteria')
-const SensitiveCriteria = require('../criterias/SensitiveCriteria')
+const status = require('http-status');
+const { Article, User, Comment } = require('../models');
+const BaseRepository = require('../repositories/BaseRepository');
+const auth = require('../libs/auth');
+const { sendMail } = require('../libs/email');
+const verifyRecaptcha = require('../libs/recaptcha');
+const errorHelper = require('../utils/errors');
+const bcryptService = require('../utils/bcrypt');
+const ApiError = require('../utils/api-error');
+const response = require('../utils/response');
+const userRepository = require('../repositories/UserRepository');
+const articleRepository = require('../repositories/ArticleRepository');
+const commentRepository = require('../repositories/CommentRepository');
+const DefaultCriteria = require('../criterias/DefaultCriteria');
+const SensitiveCriteria = require('../criterias/SensitiveCriteria');
 
 const ERROR_CODES = {
   USER_NOT_EXIST: 'USER_NOT_EXIST',
@@ -27,8 +27,8 @@ const ERROR_CODES = {
   ARTICLE_NOT_FOUND: 'ARTICLE_NOT_FOUND',
   TAG_NOT_FOUND: 'TAG_NOT_FOUND'
 }
-const defaultCriteria = new DefaultCriteria()
-const sensitiveCriteria = new SensitiveCriteria()
+const defaultCriteria = new DefaultCriteria();
+const sensitiveCriteria = new SensitiveCriteria();
 const UserController = () => {
   const version = (req, res) => {
     return response(res)

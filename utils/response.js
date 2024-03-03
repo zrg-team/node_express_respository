@@ -1,6 +1,6 @@
 
 const status = require('http-status');
-const { i18n } = require('../config').i18n;
+const { i18n } = require('../config/index').i18n;
 const ApiError = require('../utils/api-error');
 
 const assignArticleToCategorySuccess = (res, article_id, category_id) => {

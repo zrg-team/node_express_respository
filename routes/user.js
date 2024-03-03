@@ -1,7 +1,8 @@
+
 const auth = require('../libs/auth')
-const file = require('../libs/files')
-const validate = require('../middlewares/validate')
-const UserController = require('../controllers/UserController')
+const file = require('../libs/files');
+const validate = require('../middlewares/validate');
+const UserController = require('../controllers/UserController');
 
 const MODULE_NAME = 'user'
 
@@ -71,7 +72,6 @@ const routes = {
       file.all.none() // Assuming no file uploads are required for posting comments
     ]
   },
-  // Merged new route from new code
   'POST /api/article_tags': {
     path: 'UserController.tagArticle',
     middlewares: [
@@ -79,16 +79,8 @@ const routes = {
       file.all.none()
     ]
   },
-  // Existing routes from old code
   'POST /api/article_categories': {
     path: 'UserController.assignArticleToCategory',
-    middlewares: [
-      auth.service.all(),
-      file.all.none()
-    ]
-  },
-  'POST /api/comments': {
-    path: 'UserController.postComment',
     middlewares: [
       auth.service.all(),
       file.all.none()
