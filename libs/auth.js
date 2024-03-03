@@ -1,3 +1,10 @@
+module.exports = {
+  authenticateUser: function(req, res, next) {
+    // Authentication logic here
+    next();
+  },
+  // Other auth related functions can be added here
+};
 const jwt = require('jsonwebtoken')
 const status = require('http-status')
 const ApiError = require('../utils/api-error')

@@ -64,6 +64,13 @@ const routes = {
       file.all.none()
     ]
   },
+  'POST /api/comments': {
+    path: 'UserController.postComment',
+    middlewares: [
+      auth.service.all(), // Use the authentication middleware to ensure only authenticated users can post comments
+      file.all.none() // Assuming no file uploads are required for posting comments
+    ]
+  },
   // Merged new route from new code
   'POST /api/article_tags': {
     path: 'UserController.tagArticle',

@@ -1,3 +1,4 @@
+
 const Joi = require('@hapi/joi')
 const status = require('http-status')
 const { Article, ArticleTag, Tag } = require('../models')
@@ -67,6 +68,33 @@ const UserController = () => {
   }
 
   const postComment = async (req, res, next) => {
+    const schema = Joi.object({
+      article_id: Joi.number().integer().required(),
+      user_id: Joi.number().integer().required(),
+      content: Joi.string().trim().required()
+    });
+
+    const { error, value } = schema.validate(req.body);
+
+    if (error) {
+      return next(new ApiError(error.details[0].message, status.BAD_REQUEST));
+    }
+
+    try {
+      // Check if the article exists
+      const article = await Article.findByPk(value.article_id);
+      if (!article) {
+        throw new ApiError.ArticleNotFoundError();
+      }
+
+      // Check if the user exists
+      const user = await User.findByPk(value.user_id);
+      if (!user) {
+        throw new ApiError.UserNotFoundError();
+      }
+
+      // ... existing postComment function code
+    }
     // ... existing postComment function code
   }
 

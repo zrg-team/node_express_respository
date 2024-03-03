@@ -1,3 +1,9 @@
+module.exports = {
+  setupRoutes: function(app) {
+    // Route setup logic here
+  },
+  // Other routing related functions can be added here
+};
 const mapRoutes = require('express-routes-mapper')
 const path = require('path')
 const fs = require('fs')

@@ -1,3 +1,4 @@
+
 const status = require('http-status');
 const { i18n } = require('../config').i18n;
 const ApiError = require('../utils/api-error');
@@ -36,6 +37,15 @@ module.exports = (res = {}) => {
           .status(code)
           .json({ success: false, message: msg });
       }
+    },
+    commentPostedSuccess: (comment) => {
+      return res
+        .status(status.CREATED)
+        .json({
+          success: true,
+          message: i18n.__('Comment has been posted successfully.'),
+          comment_id: comment.id
+        });
     },
     commentCreated: (comment) => {
       return res

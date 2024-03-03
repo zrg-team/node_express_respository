@@ -1,7 +1,7 @@
 /* eslint-disable import/no-dynamic-require */
 const env = require(`./${process.env.NODE_ENV.toLowerCase()}.json`)
 const database = require(`./config.json`)
-const i18n = require('i18n')
+const i18n = require('i18n') // No change here, just context for the next line
 
 i18n.configure({
   locales: ['en', 'es', 'de', 'fr'], // Combined set of supported locales
@@ -9,7 +9,7 @@ i18n.configure({
   defaultLocale: 'en', // Preserved from the existing code
   autoReload: true, // Preserved from the existing code
   updateFiles: false, // Preserved from the existing code
-  objectNotation: true // Preserved from the new code
+  objectNotation: true // Preserved from the existing code
 })
 
 module.exports = {

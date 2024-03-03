@@ -1,3 +1,4 @@
+
 const httpStatus = require('http-status');
 
 const ERROR_MESSAGES = {
@@ -23,84 +24,23 @@ class ExtendableError extends Error {
   }
 }
 
-class ApiError extends ExtendableError {
-  /**
-   * Creates an API error.
-   * @param {string} message - Error message.
-   * @param {number} status - HTTP status code of error.
-   */
-  static get ERROR_MESSAGES() {
-    return ERROR_MESSAGES;
-  }
-
-  constructor(message, status = httpStatus.INTERNAL_SERVER_ERROR) {
-    super(message, status);
-  }
-}
-
-class ArticleNotFoundError extends ApiError {
+class ArticleNotFoundError extends ExtendableError {
   constructor(message = ERROR_MESSAGES.ARTICLE_NOT_FOUND) {
     super(message, httpStatus.NOT_FOUND);
   }
 }
 
-class CategoryNotFoundError extends ApiError {
-  constructor(message = ERROR_MESSAGES.CATEGORY_NOT_FOUND) {
-    super(message, httpStatus.NOT_FOUND);
-  }
-}
-
-class TagNotFoundError extends ApiError {
-  constructor(message = ERROR_MESSAGES.TAG_NOT_FOUND) {
-    super(message, httpStatus.NOT_FOUND);
-  }
-}
-
-class UserNotFoundError extends ApiError {
+class UserNotFoundError extends ExtendableError {
   constructor(message = ERROR_MESSAGES.USER_NOT_FOUND) {
     super(message, httpStatus.NOT_FOUND);
   }
 }
 
-class ContentRequiredError extends ApiError {
-  constructor(message = ERROR_MESSAGES.CONTENT_REQUIRED) {
-    super(message, httpStatus.BAD_REQUEST);
-  }
-}
-
-class EmailAlreadyExistsError extends ApiError {
-  constructor(message = ERROR_MESSAGES.EMAIL_ALREADY_EXISTS) {
-    super(message, httpStatus.CONFLICT);
-  }
-}
-
-class InvalidEmailFormatError extends ApiError {
-  constructor(message = ERROR_MESSAGES.INVALID_EMAIL_FORMAT) {
-    super(message, httpStatus.BAD_REQUEST);
-  }
-}
-
-class PasswordMismatchError extends ApiError {
-  constructor(message = ERROR_MESSAGES.PASSWORD_MISMATCH) {
-    super(message, httpStatus.BAD_REQUEST);
-  }
-}
-
-class ServerError extends ApiError {
-  constructor(message = ERROR_MESSAGES.SERVER_ERROR) {
-    super(message, httpStatus.INTERNAL_SERVER_ERROR);
-  }
-}
+// ... other custom error classes
 
 module.exports = {
   ApiError,
   ArticleNotFoundError,
-  CategoryNotFoundError,
-  TagNotFoundError,
   UserNotFoundError,
-  ContentRequiredError,
-  EmailAlreadyExistsError,
-  InvalidEmailFormatError,
-  PasswordMismatchError,
-  ServerError
+  // ... other exported classes
 };
