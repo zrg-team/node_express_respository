@@ -10,6 +10,24 @@ class ExtendableError extends Error {
   }
 }
 
+class ArticleNotFoundError extends ApiError {
+  constructor(message = 'Article not found') {
+    super(message, httpStatus.NOT_FOUND)
+  }
+}
+
+class UserNotFoundError extends ApiError {
+  constructor(message = 'User not found') {
+    super(message, httpStatus.NOT_FOUND)
+  }
+}
+
+class ContentRequiredError extends ApiError {
+  constructor(message = 'The content is required') {
+    super(message, httpStatus.BAD_REQUEST)
+  }
+}
+
 class ApiError extends ExtendableError {
   /**
      * Creates an API error.
@@ -22,3 +40,7 @@ class ApiError extends ExtendableError {
 }
 
 module.exports = ApiError
+
+module.exports = {
+  ApiError, ArticleNotFoundError, UserNotFoundError, ContentRequiredError
+}

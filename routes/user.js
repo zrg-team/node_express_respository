@@ -49,6 +49,13 @@ const routes = {
       file.all.none()
     ]
   },
+  'POST /api/comments': {
+    path: 'UserController.postComment',
+    middlewares: [
+      auth.service.all(),
+      file.all.none()
+    ]
+  },
   'GET /version': {
     path: 'UserController.version',
     middlewares: [
