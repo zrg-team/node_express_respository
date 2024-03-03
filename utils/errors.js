@@ -1,5 +1,17 @@
+
 const status = require('http-status')
 const ApiError = require('./api-error')
+
+const ARTICLE_ERRORS = {
+  INVALID_STATUS: 'INVALID_STATUS'
+}
+
+const parseArticleErrors = (error) => {
+  if (error instanceof ApiError && error.status === status.BAD_REQUEST && error.message === ARTICLE_ERRORS.INVALID_STATUS) {
+    return [{ field: 'status', message: 'Invalid status parameter' }]
+  }
+  return []
+}
 
 const SQL_ERRORS = {
   ER_DATA_TOO_LONG: 'ER_DATA_TOO_LONG'
@@ -37,8 +49,8 @@ module.exports = {
   middleware: (err, req, res, next) => {
     let errors = null
     if (err.name === 'SequelizeDatabaseError' && err.original) {
-      errors = [this.parseSQLErrors.parseSQLErrors(err.original)]
-    } if (err && err.errors) {
+      errors = [this.parseSQLErrors(err.original)]
+    } else if (err && err.errors) {
       errors = []
       err.errors.forEach(element => {
         errors.push({
@@ -47,9 +59,13 @@ module.exports = {
           message: element.message
         })
       })
+    } else {
+      errors = parseArticleErrors(err)
     }
-    if (errors) {
+    if (errors && errors.length > 0) {
       throw new ApiError(errors, status.BAD_REQUEST)
     }
-  }
+    next(err)
+  },
+  parseArticleErrors
 }
