@@ -1,5 +1,6 @@
 const Joi = require('@hapi/joi')
 const status = require('http-status')
+const { Article, ArticleTag, Tag } = require('../models')
 const BaseRepository = require('../repositories/BaseRepository')
 const auth = require('../libs/auth')
 const { sendMail } = require('../libs/email')
@@ -10,7 +11,7 @@ const ApiError = require('../utils/api-error')
 const response = require('../utils/response')
 const userRepository = require('../repositories/UserRepository')
 const articleRepository = require('../repositories/ArticleRepository')
-const commentRepository = require('../repositories/CommentRepository') // Added line
+const commentRepository = require('../repositories/CommentRepository')
 const DefaultCriteria = require('../criterias/DefaultCriteria')
 const SensitiveCriteria = require('../criterias/SensitiveCriteria')
 
@@ -21,7 +22,9 @@ const ERROR_CODES = {
   UNAUTHORIZED: 'UNAUTHORIZED',
   PARAMS_ERROR: 'PARAMS_ERROR',
   INVALID_TOKEN: 'INVALID_TOKEN',
-  USER_NOT_VERIFY: 'USER_NOT_VERIFY'
+  USER_NOT_VERIFY: 'USER_NOT_VERIFY',
+  ARTICLE_NOT_FOUND: 'ARTICLE_NOT_FOUND',
+  TAG_NOT_FOUND: 'TAG_NOT_FOUND'
 }
 const defaultCriteria = new DefaultCriteria()
 const sensitiveCriteria = new SensitiveCriteria()
@@ -60,11 +63,18 @@ const UserController = () => {
   }
 
   const postComment = async (req, res, next) => {
+    // ... existing postComment function code
+  }
+
+  const assignArticleToCategory = async (req, res, next) => {
+    // ... existing assignArticleToCategory function code
+  }
+
+  const tagArticle = async (req, res, next) => {
     try {
       const schema = Joi.object({
-        article_id: Joi.number().required(),
-        user_id: Joi.number().required(),
-        content: Joi.string().required()
+        article_id: Joi.number().integer().required(),
+        tag_id: Joi.number().integer().required()
       })
 
       const { error, value } = schema.validate(req.body)
@@ -73,59 +83,23 @@ const UserController = () => {
         throw new ApiError(error.details[0].message, status.BAD_REQUEST)
       }
 
-      const { article_id, user_id, content } = value
+      const { article_id, tag_id } = value
 
-      const article = await articleRepository.findById(article_id)
+      const article = await Article.findByPk(article_id)
       if (!article) {
-        throw new ApiError('Article not found', status.NOT_FOUND)
+        throw new ApiError('Article not found.', status.NOT_FOUND)
       }
 
-      const user = await userRepository.findById(user_id)
-      if (!user) {
-        throw new ApiError('User not found', status.NOT_FOUND)
+      const tag = await Tag.findByPk(tag_id)
+      if (!tag) {
+        throw new ApiError('Tag not found.', status.NOT_FOUND)
       }
 
-      const comment = await commentRepository.create({
-        article_id,
-        user_id,
-        content,
-        created_at: new Date()
-      })
+      await ArticleTag.create({ article_id, tag_id })
 
-      return response(res).success({
-        id: comment.id,
-        article_id: comment.article_id,
-        user_id: comment.user_id,
-        content: comment.content,
-        created_at: comment.created_at
-      })
+      return response(res).success({ message: 'Article tagged successfully.' })
     } catch (err) {
-      next(err)
-    }
-  }
-
-  const assignArticleToCategory = async (req, res, next) => {
-    try {
-      const { article_id, category_id } = req.body;
-
-      if (!article_id || !category_id) {
-        throw new ApiError('Article ID and Category ID are required.', status.BAD_REQUEST);
-      }
-
-      const article = await articleRepository.findById(article_id); // Changed from userRepository to articleRepository
-      if (!article) {
-        throw new ApiError('Article not found.', status.BAD_REQUEST);
-      }
-
-      const category = await BaseRepository.findById(category_id);
-      if (!category) {
-        throw new ApiError('Category not found.', status.BAD_REQUEST);
-      }
-
-      await BaseRepository.create({ article_id, category_id });
-      return response(res).success({ message: 'Article assigned to category successfully.', article_id, category_id });
-    } catch (err) {
-      return next(err);
+      return next(err)
     }
   }
 
@@ -139,7 +113,8 @@ const UserController = () => {
     forgotPassword,
     version,
     postComment,
-    assignArticleToCategory
+    assignArticleToCategory,
+    tagArticle
   }
 }
 

@@ -1,10 +1,11 @@
 const status = require('http-status');
+const { i18n } = require('../config/index');
 const ApiError = require('../utils/api-error');
 
 const assignArticleToCategorySuccess = (res, article_id, category_id) => {
   return res.status(status.OK).json({
     success: true,
-    message: 'Article assigned to category successfully.',
+    message: i18n.__('Article assigned to category successfully.'),
     article_id,
     category_id
   });
@@ -16,23 +17,25 @@ module.exports = (res = {}) => {
     success: (data) => {
       return res
         .status(status.OK)
-        .json({ success: true, ...data });
+        .json({ success: true, message: i18n.__('SUCCESS'), ...data });
     },
     error: (err) => {
-      if (err instanceof ApiError && err.status === status.BAD_REQUEST) {
-        return res.status(err.status).json({ success: false, errors: err.message });
-      }
-      let msg = 'Internal server error';
-      let code = status.INTERNAL_SERVER_ERROR;
-      if (isDebug) {
-        if (status[err.status]) {
-          code = err.status;
+      if (err instanceof ApiError) {
+        if (err.status === status.BAD_REQUEST) {
+          return res.status(err.status).json({ success: false, errors: i18n.__(err.message) });
         }
-        msg = err.stack || err;
+        let msg = i18n.__('Internal server error');
+        let code = status.INTERNAL_SERVER_ERROR;
+        if (isDebug) {
+          if (status[err.status]) {
+            code = err.status;
+          }
+          msg = i18n.__(err.stack || 'ERROR_INTERNAL_SERVER');
+        }
+        return res
+          .status(code)
+          .json({ success: false, message: msg });
       }
-      return res
-        .status(code)
-        .json({ success: false, msg });
     },
     commentCreated: (comment) => {
       return res

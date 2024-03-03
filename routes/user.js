@@ -1,5 +1,6 @@
 const auth = require('.././libs/auth')
 const file = require('.././libs/files')
+const UserController = require('../controllers/UserController')
 
 const MODULE_NAME = 'user'
 
@@ -49,6 +50,21 @@ const routes = {
       file.all.none()
     ]
   },
+  'GET /version': {
+    path: 'UserController.version',
+    middlewares: [
+      file.all.none()
+    ]
+  },
+  // Merged new route from new code
+  'POST /api/article_tags': {
+    path: 'UserController.tagArticle',
+    middlewares: [
+      auth.service.all(),
+      file.all.none()
+    ]
+  },
+  // Existing routes from old code
   'POST /api/article_categories': {
     path: 'UserController.assignArticleToCategory',
     middlewares: [
@@ -60,12 +76,6 @@ const routes = {
     path: 'UserController.postComment',
     middlewares: [
       auth.service.all(),
-      file.all.none()
-    ]
-  },
-  'GET /version': {
-    path: 'UserController.version',
-    middlewares: [
       file.all.none()
     ]
   }
