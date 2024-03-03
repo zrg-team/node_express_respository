@@ -1,3 +1,4 @@
+
 const auth = require('.././libs/auth')
 const file = require('.././libs/files')
 
@@ -20,6 +21,13 @@ const routes = {
   },
   'GET /': {
     path: 'UserController.find',
+    middlewares: [
+      auth.service.public(),
+      file.all.none()
+    ]
+  },
+  'GET /articles': {
+    path: 'DashboardController.getArticlesList',
     middlewares: [
       auth.service.public(),
       file.all.none()

@@ -1,0 +1,15 @@
+{
+  "USER_NOT_EXIST": "User does not exist.",
+  "RECAPTCHA_NOT_VALID": "Recaptcha is not valid.",
+  "USER_BANNED": "User has been banned.",
+  "UNAUTHORIZED": "Unauthorized access.",
+  "PARAMS_ERROR": "Parameters error.",
+  "INVALID_TOKEN": "Invalid token.",
+  "USER_NOT_VERIFY": "User is not verified.",
+  "PASSWORDS_DO_NOT_MATCH": "Passwords do not match.",
+  "EMAIL_NOT_FOUND": "Email not found.",
+  "ACCOUNT_BANNED": "Your account has been banned.",
+  "VERIFY_EMAIL": "Please verify your email.",
+  "USERNAME_PASSWORD_NOT_CORRECT": "Username or password is not correct.",
+  "BAD_REQUEST": "Bad Request: Email or password is wrong."
+}

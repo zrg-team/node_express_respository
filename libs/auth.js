@@ -1,5 +1,7 @@
+
 const jwt = require('jsonwebtoken')
 const status = require('http-status')
+const i18n = require('i18n')
 const ApiError = require('../utils/api-error')
 const config = require('../config')
 
@@ -8,7 +10,15 @@ const utils = {
   verify: (token, cb) => jwt.verify(token, config.jwt.secret, {}, cb)
 }
 
-function authenticate (req) {
+function setLanguage(req) {
+  const language = req.header('Accept-Language') || i18n.getLocale();
+  i18n.setLocale(language);
+}
+
+function authenticate(req) {
+  // Set user's preferred language for each request
+  setLanguage(req);
+
   let tokenToVerify
 
   if (req.header('Authorization')) {
@@ -35,7 +45,7 @@ function authenticate (req) {
   return [null, tokenToVerify]
 }
 
-function validateToken (type, token) {
+function validateToken(type, token) {
   switch (type) {
     case 'ADMIN':
       return token.type_code === 'ADMIN' && token.role_code === 'ADMIN'

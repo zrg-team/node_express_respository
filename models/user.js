@@ -1,3 +1,4 @@
+
 const bcryptService = require('../utils/bcrypt')
 
 const hooks = {
@@ -45,6 +46,10 @@ module.exports = function (sequelize, DataTypes) {
     updatedAt: {
       type: DataTypes.DATE,
       allowNull: true
+    },
+    name: {
+      type: DataTypes.STRING(256),
+      allowNull: false
     },
     user_type_id: {
       type: DataTypes.INTEGER(11),
