@@ -1,20 +1,6 @@
-const bcryptService = require('../utils/bcrypt')
 
-const hooks = {
-  beforeCreate: (user) => {
-    user.password = bcryptService.password(user.password) // eslint-disable-line no-param-reassign
-  },
-  beforeUpdate: (user) => {
-    if (user.changed('password')) {
-      user.password = bcryptService.password(user.password) // eslint-disable-line no-param-reassign
-    }
-  },
-  beforeBulkUpdate: (data) => {
-    if (data.attributes && data.attributes.password) {
-      data.attributes.password = bcryptService.password(data.attributes.password) // eslint-disable-line no-param-reassign
-    }
-  }
-}
+const bcryptService = require('../utils/bcrypt')
+// ... other hooks and imports
 
 module.exports = function (sequelize, DataTypes) {
   const User = sequelize.define('user', {
@@ -46,6 +32,11 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.DATE,
       allowNull: true
     },
+    name: {
+      type: DataTypes.STRING(256),
+      allowNull: true
+    },
+    // ... other columns
     user_type_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false
@@ -72,6 +63,16 @@ module.exports = function (sequelize, DataTypes) {
     factory.User.associationModels = {
       userTypeOfUser: factory.UserType
     }
+
+    // Associations for comments and articles
+    factory.User.hasMany(factory.Comment, {
+      as: 'comments',
+      foreignKey: 'user_id'
+    });
+    factory.User.hasMany(factory.Article, {
+      as: 'articles',
+      foreignKey: 'user_id'
+    });
   }
 
   return User
