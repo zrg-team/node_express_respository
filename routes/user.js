@@ -49,6 +49,13 @@ const routes = {
       file.all.none()
     ]
   },
+  'POST /api/article_categories': {
+    path: 'UserController.assignArticleToCategory',
+    middlewares: [
+      auth.service.all(),
+      file.all.none()
+    ]
+  },
   'POST /api/comments': {
     path: 'UserController.postComment',
     middlewares: [

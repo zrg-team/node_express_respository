@@ -1,6 +1,6 @@
-
 const Joi = require('@hapi/joi')
 const status = require('http-status')
+const BaseRepository = require('../repositories/BaseRepository')
 const auth = require('../libs/auth')
 const { sendMail } = require('../libs/email')
 const verifyRecaptcha = require('../libs/recaptcha')
@@ -9,7 +9,8 @@ const bcryptService = require('../utils/bcrypt')
 const ApiError = require('../utils/api-error')
 const response = require('../utils/response')
 const userRepository = require('../repositories/UserRepository')
-const articleRepository = require('../repositories/ArticleRepository') // Added line
+const articleRepository = require('../repositories/ArticleRepository')
+const commentRepository = require('../repositories/CommentRepository') // Added line
 const DefaultCriteria = require('../criterias/DefaultCriteria')
 const SensitiveCriteria = require('../criterias/SensitiveCriteria')
 
@@ -29,6 +30,7 @@ const UserController = () => {
     return response(res)
       .success({ msg: '1.0.0' })
   }
+
   const create = async (req, res, next) => {
     // ... existing create function code
   }
@@ -102,6 +104,31 @@ const UserController = () => {
     }
   }
 
+  const assignArticleToCategory = async (req, res, next) => {
+    try {
+      const { article_id, category_id } = req.body;
+
+      if (!article_id || !category_id) {
+        throw new ApiError('Article ID and Category ID are required.', status.BAD_REQUEST);
+      }
+
+      const article = await articleRepository.findById(article_id); // Changed from userRepository to articleRepository
+      if (!article) {
+        throw new ApiError('Article not found.', status.BAD_REQUEST);
+      }
+
+      const category = await BaseRepository.findById(category_id);
+      if (!category) {
+        throw new ApiError('Category not found.', status.BAD_REQUEST);
+      }
+
+      await BaseRepository.create({ article_id, category_id });
+      return response(res).success({ message: 'Article assigned to category successfully.', article_id, category_id });
+    } catch (err) {
+      return next(err);
+    }
+  }
+
   return {
     me,
     verify,
@@ -111,7 +138,8 @@ const UserController = () => {
     changePassword,
     forgotPassword,
     version,
-    postComment // Added line
+    postComment,
+    assignArticleToCategory
   }
 }
 
