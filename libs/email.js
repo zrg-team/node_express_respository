@@ -39,6 +39,20 @@ function sendMail (type, data = {}, mailOptions = {}) {
   }
 }
 
+function sendRegistrationConfirmation(email, token) {
+  const mailOptions = {
+    to: email,
+    subject: 'Confirm your registration',
+    html: `<p>Please confirm your registration by clicking on the link below:</p>
+           <a href="http://example.com/confirm?token=${token}">Confirm Registration</a>`
+  };
+
+  return sendMail('registration_confirmation', {}, mailOptions);
+}
+
+module.exports.sendRegistrationConfirmation = sendRegistrationConfirmation;
+
+
 module.exports = {
   sendMail
 }

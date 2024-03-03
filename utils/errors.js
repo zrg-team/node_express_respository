@@ -1,5 +1,7 @@
+
 const status = require('http-status')
 const ApiError = require('./api-error')
+const { EmailAlreadyExistsError, InvalidEmailFormatError, PasswordMismatchError, ServerError } = require('./api-error')
 
 const SQL_ERRORS = {
   ER_DATA_TOO_LONG: 'ER_DATA_TOO_LONG'
@@ -51,5 +53,22 @@ module.exports = {
     if (errors) {
       throw new ApiError(errors, status.BAD_REQUEST)
     }
+
+    // Custom error handling for user registration
+    if (err instanceof EmailAlreadyExistsError) {
+      return res.status(err.status).json({ success: false, message: err.message })
+    }
+    if (err instanceof InvalidEmailFormatError) {
+      return res.status(err.status).json({ success: false, message: err.message })
+    }
+    if (err instanceof PasswordMismatchError) {
+      return res.status(err.status).json({ success: false, message: err.message })
+    }
+    if (err instanceof ServerError) {
+      return res.status(err.status).json({ success: false, message: err.message })
+    }
+
+    // Continue with the next error middleware
+    next(err)
   }
 }

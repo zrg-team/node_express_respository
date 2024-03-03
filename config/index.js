@@ -6,10 +6,10 @@ const i18n = require('i18n')
 i18n.configure({
   locales: ['en', 'es', 'de', 'fr'], // Combined set of supported locales
   directory: __dirname + '/locales',
-  defaultLocale: 'en',
-  autoReload: true, // Existing feature from the old code
-  updateFiles: false, // Existing feature from the old code
-  objectNotation: true // New feature from the new code
+  defaultLocale: 'en', // Preserved from the existing code
+  autoReload: true, // Preserved from the existing code
+  updateFiles: false, // Preserved from the existing code
+  objectNotation: true // Preserved from the new code
 })
 
 module.exports = {

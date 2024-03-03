@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken')
 const status = require('http-status')
 const ApiError = require('../utils/api-error')
+const crypto = require('crypto')
 const config = require('../config')
 
 const utils = {
@@ -91,6 +92,15 @@ const service = {
     })
   }
 }
+
+// Utility function to generate email confirmation token
+const generateEmailConfirmationToken = () => {
+  return crypto.randomBytes(20).toString('hex');
+}
+
+// Expose the generateEmailConfirmationToken function
+module.exports.generateEmailConfirmationToken = generateEmailConfirmationToken;
+
 
 module.exports = {
   service,

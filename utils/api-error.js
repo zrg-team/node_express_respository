@@ -6,7 +6,11 @@ const ERROR_MESSAGES = {
   MISSING_ARTICLE_OR_CATEGORY_ID: 'Article ID and Category ID are required.',
   TAG_NOT_FOUND: 'Tag not found.',
   USER_NOT_FOUND: 'User not found',
-  CONTENT_REQUIRED: 'The content is required'
+  CONTENT_REQUIRED: 'The content is required',
+  EMAIL_ALREADY_EXISTS: 'Email already exists.',
+  INVALID_EMAIL_FORMAT: 'Invalid email format.',
+  PASSWORD_MISMATCH: 'Password and confirmation do not match.',
+  SERVER_ERROR: 'An unexpected error occurred on the server.'
 };
 
 class ExtendableError extends Error {
@@ -64,11 +68,39 @@ class ContentRequiredError extends ApiError {
   }
 }
 
+class EmailAlreadyExistsError extends ApiError {
+  constructor(message = ERROR_MESSAGES.EMAIL_ALREADY_EXISTS) {
+    super(message, httpStatus.CONFLICT);
+  }
+}
+
+class InvalidEmailFormatError extends ApiError {
+  constructor(message = ERROR_MESSAGES.INVALID_EMAIL_FORMAT) {
+    super(message, httpStatus.BAD_REQUEST);
+  }
+}
+
+class PasswordMismatchError extends ApiError {
+  constructor(message = ERROR_MESSAGES.PASSWORD_MISMATCH) {
+    super(message, httpStatus.BAD_REQUEST);
+  }
+}
+
+class ServerError extends ApiError {
+  constructor(message = ERROR_MESSAGES.SERVER_ERROR) {
+    super(message, httpStatus.INTERNAL_SERVER_ERROR);
+  }
+}
+
 module.exports = {
   ApiError,
   ArticleNotFoundError,
   CategoryNotFoundError,
   TagNotFoundError,
   UserNotFoundError,
-  ContentRequiredError
+  ContentRequiredError,
+  EmailAlreadyExistsError,
+  InvalidEmailFormatError,
+  PasswordMismatchError,
+  ServerError
 };

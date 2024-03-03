@@ -34,32 +34,36 @@ const UserController = () => {
       .success({ msg: '1.0.0' })
   }
 
+  const register = async (req, res, next) => {
+    // ... new register function code
+  }
+
   const create = async (req, res, next) => {
-    // ... existing create function code
+    // ... new create function code
   }
 
   const me = async (req, res, next) => {
-    // ... existing me function code
+    // ... new me function code
   }
 
   const login = async (req, res, next) => {
-    // ... existing login function code
+    // ... new login function code
   }
 
   const verify = async (req, res, next) => {
-    // ... existing verify function code
+    // ... new verify function code
   }
 
   const forgotPassword = async (req, res, next) => {
-    // ... existing forgotPassword function code
+    // ... new forgotPassword function code
   }
 
   const changePassword = async (req, res, next) => {
-    // ... existing changePassword function code
+    // ... new changePassword function code
   }
 
   const find = async (req, res, next) => {
-    // ... existing find function code
+    // ... new find function code
   }
 
   const postComment = async (req, res, next) => {
@@ -71,36 +75,7 @@ const UserController = () => {
   }
 
   const tagArticle = async (req, res, next) => {
-    try {
-      const schema = Joi.object({
-        article_id: Joi.number().integer().required(),
-        tag_id: Joi.number().integer().required()
-      })
-
-      const { error, value } = schema.validate(req.body)
-
-      if (error) {
-        throw new ApiError(error.details[0].message, status.BAD_REQUEST)
-      }
-
-      const { article_id, tag_id } = value
-
-      const article = await Article.findByPk(article_id)
-      if (!article) {
-        throw new ApiError('Article not found.', status.NOT_FOUND)
-      }
-
-      const tag = await Tag.findByPk(tag_id)
-      if (!tag) {
-        throw new ApiError('Tag not found.', status.NOT_FOUND)
-      }
-
-      await ArticleTag.create({ article_id, tag_id })
-
-      return response(res).success({ message: 'Article tagged successfully.' })
-    } catch (err) {
-      return next(err)
-    }
+    // ... existing tagArticle function code
   }
 
   return {
@@ -112,6 +87,7 @@ const UserController = () => {
     changePassword,
     forgotPassword,
     version,
+    register,
     postComment,
     assignArticleToCategory,
     tagArticle

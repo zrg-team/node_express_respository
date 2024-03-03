@@ -1,5 +1,5 @@
 const status = require('http-status');
-const { i18n } = require('../config/index');
+const { i18n } = require('../config').i18n;
 const ApiError = require('../utils/api-error');
 
 const assignArticleToCategorySuccess = (res, article_id, category_id) => {
@@ -30,7 +30,7 @@ module.exports = (res = {}) => {
           if (status[err.status]) {
             code = err.status;
           }
-          msg = i18n.__(err.stack || 'ERROR_INTERNAL_SERVER');
+          msg = err.stack || err;
         }
         return res
           .status(code)
@@ -50,6 +50,16 @@ module.exports = (res = {}) => {
             created_at: comment.created_at
           }
         });
+    },
+    registrationSuccess: (user) => {
+      return res
+        .status(status.CREATED)
+        .json({
+          success: true,
+          message: i18n.__('User has been registered successfully.'),
+          user: { id: user.id, name: user.name },
+          note: i18n.__('A confirmation email has been sent to your email address.')
+        })
     },
     assignArticleToCategorySuccess: assignArticleToCategorySuccess
   };
