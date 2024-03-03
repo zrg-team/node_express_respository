@@ -1,3 +1,4 @@
+
 /* eslint-disable import/no-dynamic-require */
 const env = require(`./${process.env.NODE_ENV.toLowerCase()}.json`)
 const database = require(`./config.json`)
@@ -9,6 +10,7 @@ i18n.configure({
   defaultLocale: 'en', // Preserved from the existing code
   autoReload: true, // Preserved from the existing code
   updateFiles: false, // Preserved from the existing code
+  syncFiles: true, // Ensure new keys are added to all translation files
   objectNotation: true // Preserved from the existing code
 })
 

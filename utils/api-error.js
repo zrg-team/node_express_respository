@@ -11,7 +11,10 @@ const ERROR_MESSAGES = {
   EMAIL_ALREADY_EXISTS: 'Email already exists.',
   INVALID_EMAIL_FORMAT: 'Invalid email format.',
   PASSWORD_MISMATCH: 'Password and confirmation do not match.',
-  SERVER_ERROR: 'An unexpected error occurred on the server.'
+  SERVER_ERROR: 'An unexpected error occurred on the server.',
+  INVALID_INPUT: 'Invalid input.',
+  UNAUTHORIZED: 'Unauthorized access.',
+  FORBIDDEN: 'Access denied.'
 };
 
 class ExtendableError extends Error {
@@ -21,6 +24,24 @@ class ExtendableError extends Error {
     this.message = message;
     this.status = status;
     Error.captureStackTrace(this, this.constructor.name);
+  }
+}
+
+class ValidationError extends ExtendableError {
+  constructor(message = ERROR_MESSAGES.INVALID_INPUT, status = httpStatus.BAD_REQUEST) {
+    super(message, status);
+  }
+}
+
+class AuthenticationError extends ExtendableError {
+  constructor(message = ERROR_MESSAGES.UNAUTHORIZED, status = httpStatus.UNAUTHORIZED) {
+    super(message, status);
+  }
+}
+
+class ForbiddenError extends ExtendableError {
+  constructor(message = ERROR_MESSAGES.FORBIDDEN, status = httpStatus.FORBIDDEN) {
+    super(message, status);
   }
 }
 
@@ -36,11 +57,14 @@ class UserNotFoundError extends ExtendableError {
   }
 }
 
-// ... other custom error classes
+// ... other custom error classes can be added here
 
 module.exports = {
   ApiError,
   ArticleNotFoundError,
   UserNotFoundError,
+  ValidationError,
+  AuthenticationError,
+  ForbiddenError,
   // ... other exported classes
 };

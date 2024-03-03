@@ -1,115 +1,112 @@
-module.exports = {
-  authenticateUser: function(req, res, next) {
-    // Authentication logic here
-    next();
-  },
-  // Other auth related functions can be added here
-};
-const jwt = require('jsonwebtoken')
-const status = require('http-status')
-const ApiError = require('../utils/api-error')
-const crypto = require('crypto')
-const config = require('../config')
+const jwt = require('jsonwebtoken');
+const status = require('http-status');
+const ApiError = require('../utils/api-error');
+const crypto = require('crypto');
+const config = require('../config');
 
 const utils = {
   issue: (payload, expiresIn = 1000800) => jwt.sign(payload, config.jwt.secret, { expiresIn }),
   verify: (token, cb) => jwt.verify(token, config.jwt.secret, {}, cb)
-}
+};
 
-function authenticate (req) {
-  let tokenToVerify
+function authenticate(req) {
+  let tokenToVerify;
 
   if (req.header('Authorization')) {
-    const parts = req.header('Authorization').split(' ')
+    const parts = req.header('Authorization').split(' ');
 
     if (parts.length === 2) {
-      const scheme = parts[0]
-      const credentials = parts[1]
+      const scheme = parts[0];
+      const credentials = parts[1];
 
       if (/^Bearer$/.test(scheme)) {
-        tokenToVerify = credentials
+        tokenToVerify = credentials;
       } else {
-        return ['Format for Authorization: Bearer [token]']
+        return ['Format for Authorization: Bearer [token]'];
       }
     } else {
-      return ['Format for Authorization: Bearer [token]']
+      return ['Format for Authorization: Bearer [token]'];
     }
   } else if (req.body && req.body.token) {
-    tokenToVerify = req.body.token
-    delete req.query.token
+    tokenToVerify = req.body.token;
+    delete req.query.token;
   } else {
-    return ['No Authorization was found']
+    return ['No Authorization was found'];
   }
-  return [null, tokenToVerify]
+  return [null, tokenToVerify];
 }
 
-function validateToken (type, token) {
+function validateToken(type, token) {
   switch (type) {
     case 'ADMIN':
-      return token.type_code === 'ADMIN' && token.role_code === 'ADMIN'
+      return token.type_code === 'ADMIN' && token.role_code === 'ADMIN';
     case 'OPERATOR':
-      return token.type_code === 'ADMIN' && token.role_code === 'OPERATOR'
+      return token.type_code === 'ADMIN' && token.role_code === 'OPERATOR';
+    default:
+      return false;
   }
 }
 
-// usually: "Authorization: Bearer [token]" or "token: [token]"
 const service = {
   all: () => (req, res, next) => {
-    const [err, tokenToVerify] = authenticate(req)
-    if (err) return next(new ApiError(err, status.UNAUTHORIZED))
+    const [err, tokenToVerify] = authenticate(req);
+    if (err) return next(new ApiError(err, status.UNAUTHORIZED));
     return utils.verify(tokenToVerify, (err, thisToken) => {
-      if (err) return next(new ApiError(err, status.UNAUTHORIZED))
-      req.token = thisToken
-      return next()
-    })
+      if (err) return next(new ApiError(err, status.UNAUTHORIZED));
+      req.token = thisToken;
+      return next();
+    });
   },
   accept: (roles) => {
     return (req, res, next) => {
-      const [err, tokenToVerify] = authenticate(req)
-      if (err) return next(new ApiError(err, status.UNAUTHORIZED))
+      const [err, tokenToVerify] = authenticate(req);
+      if (err) return next(new ApiError(err, status.UNAUTHORIZED));
       return utils.verify(tokenToVerify, (err, thisToken) => {
         if (err) {
-          return next(new ApiError(err, status.UNAUTHORIZED))
+          return next(new ApiError(err, status.UNAUTHORIZED));
         }
         const valid = roles.some((type) => {
-          return validateToken(type, thisToken)
-        })
+          return validateToken(type, thisToken);
+        });
         if (!valid) {
-          return next(new ApiError('You dont have permission!', status.UNAUTHORIZED))
+          return next(new ApiError('You dont have permission!', status.UNAUTHORIZED));
         }
-        req.token = thisToken
-        return next()
-      })
-    }
+        req.token = thisToken;
+        return next();
+      });
+    };
   },
   public: () => (req, res, next) => {
     if (
       !req.header('Authorization') &&
       !(req.body && req.body.token)
     ) {
-      req.token = {}
-      return next()
+      req.token = {};
+      return next();
     }
-    const [err, tokenToVerify] = authenticate(req)
-    if (err) return next(new ApiError(err, status.UNAUTHORIZED))
+    const [err, tokenToVerify] = authenticate(req);
+    if (err) return next(new ApiError(err, status.UNAUTHORIZED));
     return utils.verify(tokenToVerify, (err, thisToken) => {
-      if (err) return next(new ApiError(err, status.UNAUTHORIZED))
-      req.token = thisToken
-      return next()
-    })
+      if (err) return next(new ApiError(err, status.UNAUTHORIZED));
+      req.token = thisToken;
+      return next();
+    });
   }
-}
+};
 
 // Utility function to generate email confirmation token
 const generateEmailConfirmationToken = () => {
   return crypto.randomBytes(20).toString('hex');
-}
-
-// Expose the generateEmailConfirmationToken function
-module.exports.generateEmailConfirmationToken = generateEmailConfirmationToken;
-
+};
 
 module.exports = {
+  // Authentication related functions or objects will be added here
+  authenticateUser: function(req, res, next) {
+    // Authentication logic here
+    next();
+  },
+  // Other auth related functions can be added here
   service,
-  utils
-}
+  utils,
+  generateEmailConfirmationToken
+};

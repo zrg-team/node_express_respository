@@ -1,4 +1,7 @@
 module.exports = {
+  // Route related functions or objects will be added here
+};
+module.exports = {
   setupRoutes: function(app) {
     // Route setup logic here
   },

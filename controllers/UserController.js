@@ -74,7 +74,7 @@ const UserController = () => {
       content: Joi.string().trim().required()
     });
 
-    const { error, value } = schema.validate(req.body);
+    const { error, value } = schema.validate(req.body, { abortEarly: false });
 
     if (error) {
       return next(new ApiError(error.details[0].message, status.BAD_REQUEST));
@@ -93,9 +93,19 @@ const UserController = () => {
         throw new ApiError.UserNotFoundError();
       }
 
-      // ... existing postComment function code
+      // Create a new comment
+      const comment = await Comment.create({
+        article_id: value.article_id,
+        user_id: value.user_id,
+        content: value.content,
+        created_at: new Date() // Assuming the created_at is handled here
+      });
+
+      // Return the comment ID and a success message
+      return response(res).commentPostedSuccess(comment);
+    } catch (err) {
+      next(err);
     }
-    // ... existing postComment function code
   }
 
   const assignArticleToCategory = async (req, res, next) => {

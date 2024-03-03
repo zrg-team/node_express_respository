@@ -1,4 +1,7 @@
 module.exports = {
+  // Database related functions or objects will be added here
+};
+module.exports = {
   connect: function() {
     // Database connection logic here
   },

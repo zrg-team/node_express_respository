@@ -65,4 +65,5 @@ module.exports = {
   sendMail,
   sendRegistrationConfirmation,
   sendEmail,
+  // Email related functions or objects will be added here
 };
