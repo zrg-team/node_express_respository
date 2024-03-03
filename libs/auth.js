@@ -44,6 +44,21 @@ function validateToken (type, token) {
   }
 }
 
+function verifyWriterPrivileges(req, res, next) {
+  const token = req.token;
+  if (!token) {
+    return next(new ApiError('No token provided', status.UNAUTHORIZED));
+  }
+
+  // Assuming 'writer' is a role that exists in the token payload
+  if (token.role !== 'writer') {
+    return next(new ApiError('You do not have writer\'s privileges', status.FORBIDDEN));
+  }
+
+  return next();
+}
+
+
 // usually: "Authorization: Bearer [token]" or "token: [token]"
 const service = {
   all: () => (req, res, next) => {
@@ -92,6 +107,7 @@ const service = {
   }
 }
 
+service.verifyWriterPrivileges = verifyWriterPrivileges;
 module.exports = {
   service,
   utils

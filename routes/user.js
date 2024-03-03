@@ -25,9 +25,24 @@ const routes = {
       file.all.none()
     ]
   },
+  'GET /articles': {
+    path: 'UserController.getArticles',
+    middlewares: [
+      auth.service.public(), // Assuming the articles list is publicly accessible
+      file.all.none()
+    ]
+  },
   'POST /login': {
     path: 'UserController.login',
     middlewares: [
+      file.all.none()
+    ]
+  },
+  'PUT /api/articles/:id': {
+    path: 'DashboardController.updateArticleDetails',
+    middlewares: [
+      auth.service.all(),
+      auth.service.checkRole(['writer', 'admin']), // Assuming 'writer' and 'admin' are valid roles for updating articles
       file.all.none()
     ]
   },

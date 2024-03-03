@@ -1,6 +1,8 @@
+
 const Sequelize = require('sequelize')
 const ICriteria = require('./ICriteria')
 const Op = Sequelize.Op
+const moment = require('moment')
 
 class DefaultCriteria extends ICriteria {
   constructor () {
@@ -22,6 +24,7 @@ class DefaultCriteria extends ICriteria {
       between: Op.between,
       notBetween: Op.notBetween
     }
+    this.criterias = [] // Added to store criteria for addFilter method
   }
 
   mapCriteriaToSequilize (searchJoin, input, model) {
@@ -72,8 +75,29 @@ class DefaultCriteria extends ICriteria {
         return parseInt(value)
       case 'DATE':
         return new Date(value)
+      case 'STRING':
+        return String(value)
       default:
         return value
+    }
+  }
+
+  addFilter(key, value, operator = '=') {
+    if (!this.operators[operator]) {
+      throw new Error(`Operator ${operator} is not supported`)
+    }
+    if (key === 'publish_date' && operator === '=') {
+      const dateValue = moment(value).startOf('day')
+      this.criterias.push({
+        key,
+        value: {
+          [Op.gte]: dateValue.toDate(),
+          [Op.lt]: dateValue.add(1, 'days').toDate()
+        },
+        type: 'between'
+      })
+    } else {
+      this.criterias.push({ key, value, type: operator })
     }
   }
 
