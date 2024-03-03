@@ -3,15 +3,11 @@ const status = require('http-status')
 const ApiError = require('../utils/api-error')
 
 // Function to format paginated responses for the articles list endpoint
-function formatPaginatedResponse(data) {
+function formatArticleListResponse(data, totalItems, totalPages) {
   return {
-    status: status.OK,
-    data: data.docs,
-    total_items: data.totalDocs,
-    total_pages: data.totalPages,
-    limit: data.limit,
-    page: data.page
-    // Add any other necessary pagination details here
+    articles: data,
+    total_count: totalItems,
+    total_pages: totalPages
   };
 }
 
@@ -21,7 +17,8 @@ module.exports = (res = {}) => {
     success: (data, isPaginated = false) => {
       // Check if the response should be paginated
       if (isPaginated) {
-        data = formatPaginatedResponse(data);
+        const { docs, totalDocs, totalPages } = data;
+        data = formatArticleListResponse(docs, totalDocs, totalPages);
       }
       return res
         .status(status.OK)

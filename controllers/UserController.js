@@ -1,6 +1,7 @@
 
 const Joi = require('@hapi/joi')
 const status = require('http-status')
+const { DEFAULT_PAGINATION_LIMIT, MAX_PAGINATION_LIMIT } = require('../config')
 const ArticleRepository = require('../repositories/ArticleRepository')
 const auth = require('../libs/auth')
 const { sendMail } = require('../libs/email')
@@ -17,9 +18,7 @@ const DetailCriteria = require('../criterias/DetailCriteria')
 const ERROR_CODES = {
   USER_NOT_EXIST: 'USER_NOT_EXIST',
   RECAPTCHA_NOT_VALID: 'RECAPTCHA_NOT_VALID',
-  USER_BANNED: 'USER_BANNED',
-  UNAUTHORIZED: 'UNAUTHORIZED',
-  PARAMS_ERROR: 'PARAMS_ERROR',
+  // ... other error codes
   INVALID_TOKEN: 'INVALID_TOKEN',
   USER_NOT_VERIFY: 'USER_NOT_VERIFY'
 }
@@ -86,35 +85,34 @@ const UserController = () => {
     }
   }
 
-  const getArticles = async (req, res, next) => {
+  const listArticles = async (req, res, next) => {
     try {
-      const { title, date, page, limit } = req.query;
-      const defaultCriteria = new DefaultCriteria();
-      const detailCriteria = new DetailCriteria();
+      const { page, limit, category_id, author_id } = req.query;
+      const criteria = new DefaultCriteria();
 
-      // Apply filtering based on title and date if provided
-      if (title) {
-        defaultCriteria.addFilter('title', title, 'like');
+      if (category_id) {
+        criteria.addFilter('category_id', category_id);
       }
-      if (date) {
-        defaultCriteria.addFilter('publish_date', date, '=');
+      if (author_id) {
+        criteria.addFilter('author_id', author_id);
       }
 
-      // Fetch articles from the database using the criteria
-      const articles = await ArticleRepository
-        .pushCriteria(defaultCriteria, detailCriteria)
-        .paginate({
-          page: page || 1,
-          limit: limit || 10
-        });
+      const paginationOptions = {
+        page: parseInt(page, 10) || 1,
+        limit: Math.min(parseInt(limit, 10) || DEFAULT_PAGINATION_LIMIT, MAX_PAGINATION_LIMIT)
+      };
 
-      // Format the response and send it
+      const articlesData = await ArticleRepository
+        .pushCriteria(criteria)
+        .paginate(paginationOptions);
+
       return response(res).success({
-        articles: articles.rows,
-        total_pages: articles.count,
-        limit: articles.limit,
-        page: articles.page
-      });
+        articles: articlesData.rows,
+        total_count: articlesData.count,
+        total_pages: Math.ceil(articlesData.count / paginationOptions.limit),
+        limit: articlesData.limit,
+        page: articlesData.page
+      }, true);
     } catch (err) {
       return next(new ApiError(err.message, status.BAD_REQUEST));
     }
@@ -126,7 +124,7 @@ const UserController = () => {
     me,
     verify,
     create,
-    getArticles,
+    listArticles, // Add the new listArticles method
     login,
     find,
     changePassword,

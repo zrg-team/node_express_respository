@@ -75,6 +75,21 @@ module.exports = {
           field: 'content',
           message: 'You cannot input more than 10000 characters.'
         }]
+      // Custom error handling for article listing process
+      } else if (err.message === 'Invalid category ID.') {
+        errors = [{
+          field: 'category_id',
+          message: 'Invalid category ID.'
+        }]
+      } else if (err.message === 'Invalid author ID.') {
+        errors = [{
+          field: 'author_id',
+          message: 'Invalid author ID.'
+        }]
+      } else if (err.message === 'Invalid pagination parameters.') {
+        errors = [{
+          message: 'Invalid pagination parameters.'
+        }]
       }
       throw new ApiError(errors, status.BAD_REQUEST)
     }
