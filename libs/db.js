@@ -1,3 +1,12 @@
+module.exports = {
+  // Database related functions or objects will be added here
+};
+module.exports = {
+  connect: function() {
+    // Database connection logic here
+  },
+  // Other database related functions can be added here
+};
 const Sequelize = require('sequelize')
 const connection = require('../config')
 const logger = require('../utils/logger')

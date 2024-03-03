@@ -1,5 +1,8 @@
-const auth = require('.././libs/auth')
-const file = require('.././libs/files')
+
+const auth = require('../libs/auth')
+const file = require('../libs/files');
+const validate = require('../middlewares/validate');
+const UserController = require('../controllers/UserController');
 
 const MODULE_NAME = 'user'
 
@@ -8,6 +11,13 @@ const routes = {
     path: 'UserController.create',
     middlewares: [
       auth.service.all(),
+      file.all.none()
+    ]
+  },
+  'POST /api/users': {
+    path: 'UserController.register',
+    middlewares: [
+      validate('userRegistration'), // Assuming a validation middleware is set up for user registration
       file.all.none()
     ]
   },
@@ -52,6 +62,27 @@ const routes = {
   'GET /version': {
     path: 'UserController.version',
     middlewares: [
+      file.all.none()
+    ]
+  },
+  'POST /api/comments': {
+    path: 'UserController.postComment',
+    middlewares: [
+      auth.service.all(), // Use the authentication middleware to ensure only authenticated users can post comments
+      file.all.none() // Assuming no file uploads are required for posting comments
+    ]
+  },
+  'POST /api/article_tags': {
+    path: 'UserController.tagArticle',
+    middlewares: [
+      auth.service.all(),
+      file.all.none()
+    ]
+  },
+  'POST /api/article_categories': {
+    path: 'UserController.assignArticleToCategory',
+    middlewares: [
+      auth.service.all(),
       file.all.none()
     ]
   }

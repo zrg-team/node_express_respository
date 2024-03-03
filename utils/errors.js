@@ -1,5 +1,6 @@
+
 const status = require('http-status')
-const ApiError = require('./api-error')
+const { ApiError, ArticleNotFoundError, UserNotFoundError, ContentRequiredError, EmailAlreadyExistsError, InvalidEmailFormatError, PasswordMismatchError, ServerError, ValidationError } = require('./api-error')
 
 const SQL_ERRORS = {
   ER_DATA_TOO_LONG: 'ER_DATA_TOO_LONG'
@@ -35,21 +36,31 @@ module.exports = {
     }
   },
   middleware: (err, req, res, next) => {
-    let errors = null
-    if (err.name === 'SequelizeDatabaseError' && err.original) {
-      errors = [this.parseSQLErrors.parseSQLErrors(err.original)]
-    } if (err && err.errors) {
-      errors = []
-      err.errors.forEach(element => {
-        errors.push({
-          field: element.path,
-          value: element.value,
-          message: element.message
-        })
-      })
+    if (err instanceof ApiError) {
+      return res.status(err.status).json({ success: false, message: err.message });
     }
-    if (errors) {
-      throw new ApiError(errors, status.BAD_REQUEST)
+
+    // Handle specific custom errors
+    if (err instanceof ArticleNotFoundError || err instanceof UserNotFoundError || err instanceof ContentRequiredError || err instanceof EmailAlreadyExistsError || err instanceof InvalidEmailFormatError || err instanceof PasswordMismatchError || err instanceof ServerError) {
+      return res.status(err.status).json({ success: false, message: err.message });
     }
+
+    // Handle validation errors
+    if (err instanceof ValidationError) {
+      return res.status(status.BAD_REQUEST).json({
+        success: false,
+        message: err.message,
+        errors: err.errors
+      });
+    }
+
+    // Fallback to generic error handling
+    const errorCode = err.status || status.INTERNAL_SERVER_ERROR;
+    const errorMessage = err.message || 'An unexpected error occurred.';
+
+    return res.status(errorCode).json({
+      success: false,
+      message: errorMessage
+    });
   }
 }
