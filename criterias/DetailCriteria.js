@@ -1,6 +1,7 @@
+
 const Sequelize = require('sequelize')
 const ICriteria = require('./ICriteria')
-const Op = Sequelize.Op
+const { Op } = require('sequelize')
 
 class DetailCriteria extends ICriteria {
   constructor () {
@@ -11,6 +12,7 @@ class DetailCriteria extends ICriteria {
     this.operators = {
       '=': Op.eq,
       '>': Op.gt,
+      'like': Op.like,
       '<': Op.lt,
       '>=': Op.gte,
       '<=': Op.lte,
@@ -27,6 +29,7 @@ class DetailCriteria extends ICriteria {
     }
   }
 
+  // Add method to include related authors and categories
   parseIncludes (includes, subCriterias, subFields, parsedIncludeNotRequired, model) {
     let group = []
     const result = includes.map(item => {
@@ -37,10 +40,8 @@ class DetailCriteria extends ICriteria {
           if (condition.group) {
             group = [...group, ...condition.group]
           }
-          // const shift = values.shift()
           return {
             association: values[0],
-            // include: [`${values}`.split(',', 3)],
             attributes: condition.attributes,
             required: !parsedIncludeNotRequired.includes(values[0])
           }
@@ -188,13 +189,23 @@ class DetailCriteria extends ICriteria {
       const parsedSearch = query.search ? `${query.search}`.split(';', this.MAX_SEARCH) : []
       const parsedFields = query.fields ? `${query.fields}`.split(';', this.MAX_SEARCH) : []
       const parsedQuery = query.searchFields ? `${query.searchFields}`.split(';', this.MAX_SEARCH) : []
+      const parsedIncludes = query.includes ? `${query.includes}`.split(';', this.MAX_SEARCH) : []
       const parsedIncludeNotRequired = query.includeNotRequired
         ? `${query.includeNotRequired}`.split(';', this.MAX_SEARCH) : []
-      let includes
+      let includes = []
       let group
       const fields = []
       const subFields = {}
       const subCriterias = {}
+      
+      // Include related authors and categories if requested
+      if (parsedIncludes.includes('authors')) {
+        includes.push({ association: 'authors' });
+      }
+      if (parsedIncludes.includes('categories')) {
+        includes.push({ association: 'categories' });
+      }
+
       const searchFields = {}
       if (parsedQuery.length) {
         parsedQuery.forEach(item => {
@@ -244,21 +255,18 @@ class DetailCriteria extends ICriteria {
         })
       }
       if (query.includes) {
-        const parsedIncludes = `${query.includes}`.split(';', this.MAX_SEARCH)
-        if (parsedIncludes.length) {
-          const data = this.parseIncludes(
-            parsedIncludes,
-            subCriterias,
-            subFields,
-            parsedIncludeNotRequired,
-            model)
-          includes = data.includes
-          group = data.group
-        }
+        const data = this.parseIncludes(
+          parsedIncludes,
+          subCriterias,
+          subFields,
+          parsedIncludeNotRequired,
+          model)
+        includes = includes.concat(data.includes)
+        group = data.group
       }
       const results = {
         group: group.length ? group : undefined,
-        include: includes || undefined,
+        include: includes.length ? includes : undefined,
         attributes: fields.length ? fields : undefined
       }
       const filters = Object.keys(results).reduce((all, key) => {

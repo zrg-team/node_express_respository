@@ -25,6 +25,13 @@ const routes = {
       file.all.none()
     ]
   },
+  'GET /articles': {
+    path: 'UserController.getArticles',
+    middlewares: [
+      auth.service.public(), // Assuming the articles list is publicly accessible
+      file.all.none()
+    ]
+  },
   'POST /login': {
     path: 'UserController.login',
     middlewares: [
