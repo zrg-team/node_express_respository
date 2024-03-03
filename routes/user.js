@@ -1,5 +1,6 @@
 const auth = require('.././libs/auth')
 const file = require('.././libs/files')
+const dashboardController = require('../controllers/DashboardController')
 
 const MODULE_NAME = 'user'
 
@@ -28,6 +29,13 @@ const routes = {
   'POST /login': {
     path: 'UserController.login',
     middlewares: [
+      file.all.none()
+    ]
+  },
+  'GET /articles': {
+    path: 'DashboardController.getArticlesList',
+    middlewares: [
+      auth.service.all(),
       file.all.none()
     ]
   },
