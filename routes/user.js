@@ -1,3 +1,4 @@
+
 const auth = require('.././libs/auth')
 const file = require('.././libs/files')
 
@@ -46,6 +47,13 @@ const routes = {
   'POST /password': {
     path: 'UserController.changePassword',
     middlewares: [
+      file.all.none()
+    ]
+  },
+  'GET /articles': {
+    path: 'DashboardController.getArticlesList',
+    middlewares: [
+      auth.service.public(),
       file.all.none()
     ]
   },

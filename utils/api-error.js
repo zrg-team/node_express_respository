@@ -10,6 +10,14 @@ class ExtendableError extends Error {
   }
 }
 
+class InvalidStatusError extends ApiError {
+  constructor (message = 'Invalid status value', status = httpStatus.BAD_REQUEST) {
+    super(message, status)
+  }
+}
+
+module.exports.InvalidStatusError = InvalidStatusError
+
 class ApiError extends ExtendableError {
   /**
      * Creates an API error.
@@ -20,5 +28,5 @@ class ApiError extends ExtendableError {
     super(message, status)
   }
 }
-
+module.exports = ApiError
 module.exports = ApiError
