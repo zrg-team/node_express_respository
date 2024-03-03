@@ -1,8 +1,10 @@
+
 const Sequelize = require('sequelize')
 const dbService = require('.././libs/db')
 // Models
 const User = require('../models/user')
 const UserType = require('../models/user_type')
+const Article = require('../models/article') // Added Article model
 const File = require('../models/file')
 
 class RepositoryHelper {
@@ -12,6 +14,7 @@ class RepositoryHelper {
     this.models = {
       User: 'User',
       UserType: 'UserType',
+      Article: 'Article', // Added Article to models
       File: 'File'
     }
   }
@@ -20,6 +23,7 @@ class RepositoryHelper {
     return this.setupAssociations(repo)
   }
 
+  // Autoload mechanism for models
   getModel (name) {
     if (this.factory[name]) {
       return this.factory[name]
@@ -38,6 +42,10 @@ class RepositoryHelper {
         model = File(this.sequelize, Sequelize)
         this.factory.File = model
         break
+      case this.models.Article: // Added case for Article
+        model = Article(this.sequelize, Sequelize)
+        this.factory.Article = model
+        break
     }
     return model
   }
@@ -47,14 +55,18 @@ class RepositoryHelper {
       case 'user':
         this.factory.User = this.getModel('User')
         this.factory.UserType = this.getModel('UserType')
-
         this.factory.User.associate(this.factory)
         return this.factory.User
+      case 'article': // Added case for Article
+        this.factory.Article = this.getModel('Article')
+        this.factory.Article.associate(this.factory) // Assuming Article has an associate method
+        return this.factory.Article
       case 'file':
         this.factory.File = this.getModel('File')
         this.factory.User = this.getModel('User')
         this.factory.File.associate(this.factory)
         return this.factory.File
+      // Add other cases as needed for different repositories
     }
   }
 }
