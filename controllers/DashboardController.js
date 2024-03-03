@@ -1,5 +1,9 @@
+
 const rawRepository = require('../repositories/RawRepository')
 const response = require('../utils/response')
+const DefaultCriteria = require('../criterias/DefaultCriteria')
+const DetailCriteria = require('../criterias/DetailCriteria')
+const ArticleRepository = require('../repositories/ArticleRepository')
 
 const DashboardController = () => {
   const version = (req, res) => {
@@ -26,9 +30,33 @@ const DashboardController = () => {
     }
   }
 
+  const getArticlesList = async (req, res, next) => {
+    try {
+      const defaultCriteria = new DefaultCriteria()
+      const detailCriteria = new DetailCriteria()
+      const filters = defaultCriteria.filter(req)
+      const details = detailCriteria.filter(req)
+
+      const articles = await ArticleRepository
+        .pushCriteria(defaultCriteria, detailCriteria)
+        .apply(req)
+        .paginate(filters, details)
+
+      return response(res)
+        .success({
+          articles: articles.data,
+          total_items: articles.total,
+          total_pages: articles.lastPage
+        })
+    } catch (err) {
+      next(err)
+    }
+  }
+
   return {
     version,
-    highlightUser
+    highlightUser,
+    getArticlesList
   }
 }
 

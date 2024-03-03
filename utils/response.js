@@ -1,4 +1,6 @@
+
 const status = require('http-status')
+const i18n = require('i18n')
 const ApiError = require('../utils/api-error')
 
 module.exports = (res = {}) => {
@@ -13,13 +15,15 @@ module.exports = (res = {}) => {
       if (err instanceof ApiError && err.status === status.BAD_REQUEST) {
         return res.status(err.status).json({ success: false, errors: err.message })
       }
-      let msg = 'Internal server error'
+      let msg = i18n.__('INTERNAL_SERVER_ERROR')
       let code = status.INTERNAL_SERVER_ERROR
       if (isDebug) {
         if (status[err.status]) {
           code = err.status
         }
         msg = err.stack || err
+      } else {
+        msg = i18n.__('ERROR_PROCESSING_REQUEST')
       }
       return res
         .status(code)

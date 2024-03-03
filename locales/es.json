@@ -1,0 +1,15 @@
+{
+  "welcome_message": "Bienvenido",
+  "user_not_found": "Usuario no encontrado",
+  "invalid_credentials": "Credenciales inválidas",
+  "account_created_successfully": "Cuenta creada con éxito",
+  "account_updated_successfully": "Cuenta actualizada con éxito",
+  "account_deleted_successfully": "Cuenta eliminada con éxito",
+  "password_reset_success": "Contraseña restablecida con éxito",
+  "email_sent": "Correo electrónico enviado",
+  "email_verified": "Correo electrónico verificado",
+  "invalid_request": "Solicitud inválida",
+  "action_completed_successfully": "Acción completada con éxito",
+  "server_error": "Error del servidor",
+  "unauthorized": "No autorizado"
+}
