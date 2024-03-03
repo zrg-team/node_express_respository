@@ -86,7 +86,7 @@ const UserController = () => {
       if (!article) {
         throw new ApiError.ArticleNotFoundError();
       }
-
+      
       // Check if the user exists
       const user = await User.findByPk(value.user_id);
       if (!user) {
