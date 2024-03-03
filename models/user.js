@@ -38,6 +38,18 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: false,
       defaultValue: '1'
     },
+    name: {
+      type: DataTypes.STRING(256),
+      allowNull: true
+    },
+    avatar: {
+      type: DataTypes.STRING(256),
+      allowNull: true
+    },
+    avatar_file_id: {
+      type: DataTypes.INTEGER(11),
+      allowNull: true
+    },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: true
