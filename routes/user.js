@@ -31,6 +31,14 @@ const routes = {
       file.all.none()
     ]
   },
+  'PUT /api/articles/:id': {
+    path: 'DashboardController.updateArticleDetails',
+    middlewares: [
+      auth.service.all(),
+      auth.service.checkRole(['writer', 'admin']), // Assuming 'writer' and 'admin' are valid roles for updating articles
+      file.all.none()
+    ]
+  },
   'POST /verify': {
     path: 'UserController.verify',
     middlewares: [
