@@ -1,3 +1,4 @@
+
 const bcryptService = require('../utils/bcrypt')
 
 const hooks = {
@@ -57,7 +58,16 @@ module.exports = function (sequelize, DataTypes) {
     avatar_file_id: {
       type: DataTypes.INTEGER(11),
       allowNull: true
-    }
+    },
+    // Remove deprecated columns
+    createdat: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    updatedat: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
   }, {
     hooks,
     tableName: 'user'
@@ -69,8 +79,15 @@ module.exports = function (sequelize, DataTypes) {
       sourceKey: 'id'
     })
 
+    // Define the one-to-many relationship with todos
+    factory.User.hasMany(factory.Todo, {
+      as: 'todos',
+      foreignKey: 'user_id'
+    })
+
     factory.User.associationModels = {
-      userTypeOfUser: factory.UserType
+      userTypeOfUser: factory.UserType,
+      todos: factory.Todo
     }
   }
 
