@@ -72,6 +72,10 @@ module.exports = function (sequelize, DataTypes) {
     factory.User.associationModels = {
       userTypeOfUser: factory.UserType
     }
+factory.User.hasMany(factory.Todo, {
+      foreignKey: 'userId',
+      as: 'todos'
+    });
   }
 
   return User
