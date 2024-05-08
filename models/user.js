@@ -1,3 +1,4 @@
+
 const bcryptService = require('../utils/bcrypt')
 
 const hooks = {
@@ -33,6 +34,11 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.STRING(128),
       allowNull: true
     },
+    email: {
+      type: DataTypes.STRING(256),
+      allowNull: false,
+      unique: true
+    },
     status: {
       type: DataTypes.INTEGER(4),
       allowNull: false,
@@ -40,11 +46,13 @@ module.exports = function (sequelize, DataTypes) {
     },
     createdAt: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: true,
+      field: 'createdat'
     },
     updatedAt: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: true,
+      field: 'updatedat' // Ensure timestamps are correctly mapped
     },
     user_type_id: {
       type: DataTypes.INTEGER(11),
